@@ -26,3 +26,32 @@ Makefile*
 # QtCreator
 
 *.autosave
+
+# Binary
+*/bin/*
+*/lib/*
+
+# Intermediate files of compiler
+*.i
+*.ii
+*.o
+obj
+
+*.cudafe*
+*.fatbin
+*.fatbin.*
+*.hash
+*.module_id
+*.ptx
+*.cubin
+moc_*
+qrc_*
+
+# cmake intermediate files
+cmake_install.cmake
+CMakeCache.txt
+CMakeFiles
+Makefile
+*/src/cuda/*
+*.qrc.depends
+
