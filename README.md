@@ -6,7 +6,7 @@ Wow~ Such stylization!
 
 This project is based on the paper: <a href="http://graphics.pixar.com/library/ByExampleStylization/index.html" target=_blank>Stylizing Animation By Example (SIGGRAPH 2013)</a>, and was provided by the authors.
 
-What I did is migrate it to newer APIs, especially newer CUDA, and provide a deployment guide on OS X 10.9.
+What I did are migrating it to newer APIs, especially newer CUDA, and providing a deployment guide on OS X 10.9.
 
 ## Nymph
 
