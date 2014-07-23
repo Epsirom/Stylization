@@ -41,7 +41,7 @@ OpenEXR | >=1.6 | 2.1.0 |
 
 #### Notes
 
-* **Do not use clang** and use gcc instead. For CUDA6 compatibility, gcc4.7 is recommended.
+* **Do not use `clang`** and use `gcc` instead. For CUDA6 compatibility, gcc4.7 is recommended.
 * **Do not use Qt5** and use Qt4 instead. The Qt provided in Homebrew work.
 * **Do not use OpenEXR provided in Homebrew**. You must download from openexr.com and compile it using gcc47.
 
@@ -51,7 +51,7 @@ OpenEXR | >=1.6 | 2.1.0 |
 brew install gcc47
 ```
 
-After a long time, it is installed in `/usr/local/Cellar/gcc47` and has links in `/usr/local/bin`. For next step, you can use the following environment variables:
+After a long time, it will be installed in `/usr/local/Cellar/gcc47` and there will be links in `/usr/local/bin`. For next step, you can use the following environment variables:
 
 ```sh
 export CC=/usr/local/bin/gcc-4.7
