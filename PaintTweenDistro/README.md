@@ -24,14 +24,14 @@ All usages of a character string to indicate a device symbol were modified to us
 ### Hardware
 
 Name | Model | My Model |
--- | -- | -- |
+--- | --- | --- |
 CPU | x64 | Intel Core i7-4850HQ @ 2.3GHz |
 GPU | NVIDIA CUDA6-Enabled GPUs, compute capability >= 2.0 | NVIDIA GeForce GT 750M @ 2GB GDDR5 |
 
 ### Software
 
 Name | Version | My Version |
--- | -- | -- |
+--- | --- | --- |
 OS X | >=10.8 | 10.9.4 |
 CMake | All is well | 2.8.12.2 |
 GCC | 4.7.x | Homebrew gcc47 4.7.3 |
