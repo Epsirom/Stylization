@@ -78,6 +78,8 @@ Luckily, thanks to `cmake`, we can compile the whole project without complex con
 
 ## Compile and run
 ```sh
+export CC=/usr/local/bin/gcc-4.7
+export CXX=/usr/local/bin/g++-4.7
 export DYLD_LIBRARY_PATH=/usr/local/cuda/lib:$DYLD_LIBRARY_PATH
 export PATH=/usr/local/cuda/bin:$PATH
 cmake .
