@@ -1,0 +1,12 @@
+#ifndef NYMPHCORE_GLOBAL_H
+#define NYMPHCORE_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(NYMPHCORE_LIBRARY)
+#  define NYMPHCORESHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define NYMPHCORESHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // NYMPHCORE_GLOBAL_H
