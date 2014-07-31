@@ -343,5 +343,6 @@
         <file>Resources/icons/zoom-original.png</file>
         <file>Resources/icons/zoom-out.png</file>
         <file>Resources/icons/qt.png</file>
+        <file alias="default_img">Resources/cnm.jpg</file>
     </qresource>
 </RCC>

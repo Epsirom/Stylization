@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>NymphViewer</class>
+ <widget class="QWidget" name="NymphViewer">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>706</width>
+    <height>466</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QToolBar" name="toolbar">
+     <property name="iconSize">
+      <size>
+       <width>16</width>
+       <height>16</height>
+      </size>
+     </property>
+     <addaction name="action_viewer_name"/>
+     <addaction name="separator"/>
+     <addaction name="action_zoom_in"/>
+     <addaction name="action_zoom_out"/>
+     <addaction name="action_zoom_origin"/>
+     <addaction name="action_zoom_fit"/>
+     <addaction name="separator"/>
+     <addaction name="action_scale"/>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>1</number>
+     </property>
+     <item>
+      <widget class="NymphSingleViewer" name="sourceView">
+       <property name="backgroundBrush">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>100</red>
+          <green>100</green>
+          <blue>100</blue>
+         </color>
+        </brush>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="NymphSingleViewer" name="resultView">
+       <property name="backgroundBrush">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>100</red>
+          <green>100</green>
+          <blue>100</blue>
+         </color>
+        </brush>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+  <action name="action_zoom_in">
+   <property name="icon">
+    <iconset resource="mainwindow.qrc">
+     <normaloff>:/Resources/icons/gtk-zoom-in.png</normaloff>:/Resources/icons/gtk-zoom-in.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom &amp;in</string>
+   </property>
+  </action>
+  <action name="action_zoom_out">
+   <property name="icon">
+    <iconset resource="mainwindow.qrc">
+     <normaloff>:/Resources/icons/gtk-zoom-out.png</normaloff>:/Resources/icons/gtk-zoom-out.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom &amp;out</string>
+   </property>
+  </action>
+  <action name="action_zoom_origin">
+   <property name="icon">
+    <iconset resource="mainwindow.qrc">
+     <normaloff>:/Resources/icons/gtk-zoom-100.png</normaloff>:/Resources/icons/gtk-zoom-100.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom &amp;origin</string>
+   </property>
+  </action>
+  <action name="action_zoom_fit">
+   <property name="icon">
+    <iconset resource="mainwindow.qrc">
+     <normaloff>:/Resources/icons/gtk-zoom-fit.png</normaloff>:/Resources/icons/gtk-zoom-fit.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom &amp;fit</string>
+   </property>
+  </action>
+  <action name="action_scale">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>100%</string>
+   </property>
+   <property name="toolTip">
+    <string>Current scale</string>
+   </property>
+  </action>
+  <action name="action_viewer_name">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Nymph Viewer</string>
+   </property>
+   <property name="toolTip">
+    <string>Nymph Viewer</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>NymphSingleViewer</class>
+   <extends>QGraphicsView</extends>
+   <header>nymphsingleviewer.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="mainwindow.qrc"/>
+ </resources>
+ <connections/>
+</ui>

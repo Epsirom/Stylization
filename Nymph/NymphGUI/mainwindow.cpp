@@ -8,6 +8,7 @@
 #include <QFileDialog>
 #include <QMimeData>
 #include <QTime>
+#include <QLineEdit>
 
 MainWindow* MainWindow::instance()
 {
@@ -21,7 +22,8 @@ MainWindow* MainWindow::instance()
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    resultWindow()
 {
     ui->setupUi(this);
     QSplitter *splitterMain = new QSplitter(Qt::Horizontal, this);
@@ -30,6 +32,8 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setCentralWidget(splitterMain);
 
     connect(ui->mdiArea, &QMdiArea::subWindowActivated, this, &MainWindow::updateMenus);
+    //connect(&resultWindow, &ResultWindow::windowActiveChanged, this, &MainWindow::updateMenus);
+    connect(qApp, &QApplication::focusChanged, this, &MainWindow::updateMenus);
 
     updateMenus();
 
@@ -44,6 +48,12 @@ MainWindow::~MainWindow()
 void MainWindow::appendLog(const QString &log)
 {
     ui->logEdit->appendPlainText(QString("[%1] %2").arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))).arg(log));
+    ui->logEdit->moveCursor(QTextCursor::End);
+}
+
+void MainWindow::executeCMD(const QString &cmd)
+{
+    appendLog(QString("Execute: %1").arg(cmd));
 }
 
 void MainWindow::documentWasModified()
@@ -64,7 +74,7 @@ void MainWindow::updateMenus()
     bool hasMdiChild = (activeMdiChild() != 0);
     bool canEdit = hasMdiChild && (!activeMdiChild()->isReadOnly());
 
-    ui->action_close_file->setEnabled(hasMdiChild);
+    ui->action_close_file->setEnabled(hasMdiChild || resultWindow.isActiveWindow());
     ui->action_run->setEnabled(hasMdiChild && canEdit);
     ui->action_save_file->setEnabled(hasMdiChild);
     ui->action_save_file_as->setEnabled(hasMdiChild);
@@ -223,7 +233,14 @@ void MainWindow::on_action_open_file_triggered()
 
 void MainWindow::on_action_close_file_triggered()
 {
-    ui->mdiArea->closeActiveSubWindow();
+    if (resultWindow.isActiveWindow())
+    {
+        resultWindow.close();
+    }
+    else
+    {
+        ui->mdiArea->closeActiveSubWindow();
+    }
 }
 
 void MainWindow::on_action_run_triggered()
@@ -233,7 +250,13 @@ void MainWindow::on_action_run_triggered()
 
 void MainWindow::on_action_show_result_triggered()
 {
-
+    if (resultWindow.isHidden())
+        resultWindow.show();
+    else
+    {
+        resultWindow.activateWindow();
+        resultWindow.raise();
+    }
 }
 
 void MainWindow::on_action_about_me_triggered()
@@ -244,4 +267,18 @@ void MainWindow::on_action_about_me_triggered()
 void MainWindow::on_action_about_qt_triggered()
 {
     QMessageBox::aboutQt(this,tr("About Qt"));
+}
+
+void MainWindow::on_cmdEdit_activated(const QString &)
+{
+    //ui->cmdEdit->clearEditText();
+    ui->cmdEdit->setCurrentIndex(-1);
+}
+
+void MainWindow::on_cmdEdit_currentIndexChanged(const QString &arg1)
+{
+    if (ui->cmdEdit->currentIndex() >= 0)
+    {
+        executeCMD(arg1.simplified());
+    }
 }

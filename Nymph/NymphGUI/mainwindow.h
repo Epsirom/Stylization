@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "nympheditor.h"
+#include "resultwindow.h"
 
 namespace Ui {
 class MainWindow;
@@ -17,6 +18,7 @@ public:
     ~MainWindow();
 
     void appendLog(const QString &log);
+    void executeCMD(const QString &cmd);
 
     static MainWindow* instance();
 
@@ -50,9 +52,14 @@ private slots:
     void highLightCurrentLine();
     void documentWasModified();
 
+    void on_cmdEdit_activated(const QString &arg1);
+
+    void on_cmdEdit_currentIndexChanged(const QString &arg1);
+
 private:
     Ui::MainWindow *ui;
 
+    ResultWindow resultWindow;
     NymphEditor * activeMdiChild();
     void iniConnect();
 };

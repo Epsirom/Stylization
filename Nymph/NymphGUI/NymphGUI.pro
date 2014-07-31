@@ -15,13 +15,21 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     nympheditor.cpp \
-    nymphgui_global.cpp
+    nymphgui_global.cpp \
+    resultwindow.cpp \
+    nymphviewer.cpp \
+    nymphsingleviewer.cpp
 
 HEADERS  += mainwindow.h \
     nympheditor.h \
-    nymphgui_global.h
+    nymphgui_global.h \
+    resultwindow.h \
+    nymphviewer.h \
+    nymphsingleviewer.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    resultwindow.ui \
+    nymphviewer.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../NymphLua/release/ -lNymphLua
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../NymphLua/debug/ -lNymphLua
