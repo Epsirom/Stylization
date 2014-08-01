@@ -1,6 +1,7 @@
 #ifndef NYMPHSINGLEVIEWER_H
 #define NYMPHSINGLEVIEWER_H
 
+#include <QGesture>
 #include <QGraphicsView>
 #include "nymphviewer.h"
 
@@ -19,12 +20,16 @@ public:
 protected:
     void scrollContentsBy(int dx, int dy);
 
+    bool event(QEvent *event);
+    bool pinchTriggered(QPinchGesture * g);
+
 private:
     NymphSingleViewer* sibling;
     int offset_x, offset_y;
     friend class NymphViewer;
 
 signals:
+    void pinchZoom(qreal factor);
 
 public slots:
 

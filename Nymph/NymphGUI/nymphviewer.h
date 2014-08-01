@@ -15,6 +15,7 @@ public:
     explicit NymphViewer(QWidget *parent = 0);
     ~NymphViewer();
 
+
 private slots:
     void on_action_zoom_in_triggered();
 
@@ -26,12 +27,14 @@ private slots:
 
     void on_action_scale_triggered();
 
+    void pinch_zoom(qreal factor);
+
 private:
     Ui::NymphViewer *ui;
 
     void syncScale();
 
-    int scale;
+    qreal scale;
 
     friend class ResultWindow;
 };

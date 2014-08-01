@@ -13,6 +13,8 @@ NymphSingleViewer::NymphSingleViewer(QWidget *parent) :
     this->setScene( scn );
     QPixmap pix( ":/default_img" );
     scn->addPixmap( pix );
+
+    this->grabGesture(Qt::PinchGesture);
 }
 
 void NymphSingleViewer::scrollContentsBy(int dx, int dy)
@@ -23,6 +25,31 @@ void NymphSingleViewer::scrollContentsBy(int dx, int dy)
     {
         sibling->syncScroll(horizontalScrollBar()->value(), verticalScrollBar()->value());
     }
+}
+
+bool NymphSingleViewer::event(QEvent *event)
+{
+    if (event->type() == QEvent::Gesture)
+    {
+        QGestureEvent * gevent = static_cast<QGestureEvent*>(event);
+        if (QGesture *pinch = gevent->gesture(Qt::PinchGesture))
+        {
+            gevent->accept();
+            pinchTriggered(static_cast<QPinchGesture *>(pinch));
+        }
+    }
+    return QGraphicsView::event(event);
+}
+
+bool NymphSingleViewer::pinchTriggered(QPinchGesture *g)
+{
+    if (g->scaleFactor() == 1)
+    {
+        return false;
+    }
+    emit pinchZoom(g->scaleFactor());
+    g->setScaleFactor(1.);
+    return true;
 }
 
 void NymphSingleViewer::syncScroll(int offx, int offy)

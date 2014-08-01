@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "nympheditor.h"
 #include "resultwindow.h"
+#include "nymphlua.h"
 
 namespace Ui {
 class MainWindow;
@@ -56,12 +57,16 @@ private slots:
 
     void on_cmdEdit_currentIndexChanged(const QString &arg1);
 
+    void on_action_cmd_trigger_triggered();
+
 private:
     Ui::MainWindow *ui;
 
     ResultWindow resultWindow;
     NymphEditor * activeMdiChild();
     void iniConnect();
+
+    NymphLua *runner;
 };
 
 #endif // MAINWINDOW_H

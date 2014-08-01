@@ -54,6 +54,9 @@
      </property>
      <item>
       <widget class="NymphSingleViewer" name="sourceView">
+       <property name="acceptDrops">
+        <bool>false</bool>
+       </property>
        <property name="backgroundBrush">
         <brush brushstyle="SolidPattern">
          <color alpha="255">

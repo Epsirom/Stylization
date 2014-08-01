@@ -23,9 +23,11 @@ MainWindow* MainWindow::instance()
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    resultWindow()
+    resultWindow(),
+    runner(new NymphLua)
 {
     ui->setupUi(this);
+
     QSplitter *splitterMain = new QSplitter(Qt::Horizontal, this);
     splitterMain->addWidget(ui->mdiWidget);
     splitterMain->addWidget(ui->logWidget);
@@ -281,4 +283,9 @@ void MainWindow::on_cmdEdit_currentIndexChanged(const QString &arg1)
     {
         executeCMD(arg1.simplified());
     }
+}
+
+void MainWindow::on_action_cmd_trigger_triggered()
+{
+    ui->cmdEdit->setFocus();
 }
