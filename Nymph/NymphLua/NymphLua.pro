@@ -1,18 +1,29 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2014-07-30T16:28:12
+# Project created by QtCreator 2014-08-01T15:42:03
 #
 #-------------------------------------------------
 
-QT       -= gui
+CONFIG += use_lua
+
+include(../paths.pri)
+
+QT       += core gui
 
 TARGET = NymphLua
 TEMPLATE = lib
-CONFIG += staticlib
 
-SOURCES += nymphlua.cpp
+DEFINES += NYMPHLUA_LIBRARY
 
-HEADERS += nymphlua.h
+SOURCES += nymphlua.cpp \
+    nymphlua_ext.cpp \
+    nymphimagemanager.cpp
+
+HEADERS += nymphlua.h\
+        nymphlua_global.h \
+    nymphlua_ext.h \
+    nymphimagemanager.h
+
 unix {
     target.path = /usr/lib
     INSTALLS += target

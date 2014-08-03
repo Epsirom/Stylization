@@ -5,8 +5,15 @@
 
 #define AVAILABLE_FILE_TYPES "Nymph Lua Script Files(*.nl)"";;All Files(*.*)"
 
-void nymphLog(const char*);
+typedef enum nymph_log_type {
+    NYMPH_LOG_INFO = 0,
+    NYMPH_LOG_WARNING = 1,
+    NYMPH_LOG_ERROR = 2
+} NymphLogType;
+
 void nymphLog(const QString &log);
+void nymphWarning(const QString &log);
+void nymphError(const QString &log);
 
 #define NYMPH_DEBUG
 

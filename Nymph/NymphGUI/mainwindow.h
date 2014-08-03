@@ -5,6 +5,7 @@
 #include "nympheditor.h"
 #include "resultwindow.h"
 #include "nymphlua.h"
+#include "nymphgui_global.h"
 
 namespace Ui {
 class MainWindow;
@@ -18,10 +19,13 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void appendLog(const QString &log);
+    void appendLog(const QString &log, NymphLogType type = NYMPH_LOG_INFO);
     void executeCMD(const QString &cmd);
 
     static MainWindow* instance();
+
+public slots:
+    void updateResultWindow();
 
 protected:
      void changeEvent(QEvent *e);
@@ -66,7 +70,7 @@ private:
     NymphEditor * activeMdiChild();
     void iniConnect();
 
-    NymphLua *runner;
+    //NymphLua *runner;
 };
 
 #endif // MAINWINDOW_H

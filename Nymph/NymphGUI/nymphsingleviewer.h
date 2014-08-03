@@ -17,6 +17,8 @@ public:
 
     qreal getFitScale();
 
+    void setImage(QPixmap& img);
+
 protected:
     void scrollContentsBy(int dx, int dy);
 

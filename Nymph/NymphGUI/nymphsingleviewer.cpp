@@ -12,9 +12,15 @@ NymphSingleViewer::NymphSingleViewer(QWidget *parent) :
     QGraphicsScene * scn = new QGraphicsScene(this);
     this->setScene( scn );
     QPixmap pix( ":/default_img" );
-    scn->addPixmap( pix );
+    setImage(pix);
 
     this->grabGesture(Qt::PinchGesture);
+}
+
+void NymphSingleViewer::setImage(QPixmap &img)
+{
+    scene()->clear();
+    scene()->addPixmap(img);
 }
 
 void NymphSingleViewer::scrollContentsBy(int dx, int dy)

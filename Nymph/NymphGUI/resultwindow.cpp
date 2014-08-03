@@ -16,3 +16,11 @@ ResultWindow::~ResultWindow()
 {
     delete ui;
 }
+
+void ResultWindow::updateImages(NymphImagePack *pack)
+{
+    ui->styleViewer->ui->sourceView->setImage(pack->style_in);
+    ui->styleViewer->ui->resultView->setImage(pack->style_out);
+    ui->resultViewer->ui->sourceView->setImage(pack->nymph_in);
+    ui->resultViewer->ui->resultView->setImage(pack->nymph_out);
+}

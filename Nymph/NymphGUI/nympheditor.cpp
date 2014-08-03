@@ -9,7 +9,10 @@
 #include "nympheditor.h"
 
 NymphEditor::NymphEditor(QWidget *parent) :
-    QPlainTextEdit(parent)
+    QPlainTextEdit(parent),
+    runner(),
+    _isRunning(false),
+    curFile()
 {
     linesExecuted = 0;
     setAcceptDrops(false);
@@ -18,12 +21,53 @@ NymphEditor::NymphEditor(QWidget *parent) :
 
     lineNumberArea = new LineNumberArea(this);
 
-    connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumberAreaWidth(int)));
-    connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateLineNumberArea(QRect,int)));
-    connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightCurrentLine()));
+    connect(this, &NymphEditor::blockCountChanged, this, &NymphEditor::updateLineNumberAreaWidth);
+    connect(this, &NymphEditor::updateRequest, this, &NymphEditor::updateLineNumberArea);
+    connect(this, &NymphEditor::cursorPositionChanged, this, &NymphEditor::highlightCurrentLine);
+
+    connect(this, &NymphEditor::statusChanged, this, &NymphEditor::highlightCurrentLine);
+    connect(&runner, &NymphRunner::finished, this, &NymphEditor::scriptFinished);
 
     updateLineNumberAreaWidth(0);
     highlightCurrentLine();
+}
+
+void NymphEditor::startRunner()
+{
+    if (_isRunning)
+    {
+        nymphError(QString("%1 is already running.").arg(curFile));
+    }
+    else
+    {
+        _isRunning = true;
+        setReadOnly(true);
+        runner.script_name = curFile;
+        runner.script_buffer = toPlainText();
+        nymphLog(QString("Start running %1").arg(curFile));
+        runner.start();
+    }
+    emit statusChanged();
+}
+
+void NymphEditor::finishRunner()
+{
+    _isRunning = false;
+    setReadOnly(false);
+    emit statusChanged();
+}
+
+void NymphEditor::scriptFinished()
+{
+    if (!runner.result_err.isEmpty())
+    {
+        nymphError(QString("Error occured when running %1.").arg(runner.script_name));
+        nymphError(QString("Error details: \r\n%1").arg(runner.result_err));
+    }
+    nymphLog(QString("Finish running %1").arg(runner.script_name));
+    _isRunning = false;
+    setReadOnly(false);
+    emit statusChanged();
 }
 
 int NymphEditor::lineNumberAreaWidth()
@@ -66,8 +110,8 @@ void NymphEditor::resizeEvent(QResizeEvent *e)
 
 void NymphEditor::highlightCurrentLine()
 {
+    QList<QTextEdit::ExtraSelection> extraSelections;
     if (!isReadOnly()) {
-        QList<QTextEdit::ExtraSelection> extraSelections;
         QTextEdit::ExtraSelection selection;
 
         QColor lineColor = QColor(Qt::cyan).lighter(160);
@@ -77,8 +121,8 @@ void NymphEditor::highlightCurrentLine()
         selection.cursor = textCursor();
         selection.cursor.clearSelection();
         extraSelections.append(selection);
-        setExtraSelections(extraSelections);
     }
+    setExtraSelections(extraSelections);
 }
 
 void NymphEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
@@ -242,6 +286,14 @@ void NymphEditor::wheelEvent(QWheelEvent *e)
 
 void NymphEditor::closeEvent(QCloseEvent *event)
 {
+    if (_isRunning) {
+        if (QMessageBox::warning(this, tr("Warning"),
+                                 tr("%1 is still running, are you sure to continue?").arg(runner.script_name),
+                                 QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) {
+            event->ignore();
+            return;
+        }
+    }
     if (closeDocument()) {
         event->accept();
     } else {

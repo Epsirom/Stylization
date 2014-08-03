@@ -2,6 +2,7 @@
 #define RESULTWINDOW_H
 
 #include <QWidget>
+#include "nymphimagemanager.h"
 
 namespace Ui {
 class ResultWindow;
@@ -14,6 +15,8 @@ class ResultWindow : public QWidget
 public:
     explicit ResultWindow(QWidget *parent = 0);
     ~ResultWindow();
+
+    void updateImages(NymphImagePack* pack);
 
 private:
     Ui::ResultWindow *ui;

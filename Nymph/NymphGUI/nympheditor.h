@@ -2,6 +2,8 @@
 #define NYMPHEDITOR_H
 
 #include <QPlainTextEdit>
+#include "nymphrunner.h"
+#include "nymphimagemanager.h"
 
 class NymphEditor : public QPlainTextEdit
 {
@@ -27,14 +29,24 @@ public:
     void zoomIn(int step);
     void zoomOut(int step);
 
+    void startRunner();
+
+    bool isRunning() {return _isRunning;}
+
+    NymphImagePack* getImagePack() { return runner.getImages(); }
+
 private:
+    NymphRunner runner;
+
     bool isUntitled;
+    bool _isRunning;
     QString curFile;
     int linesExecuted;
 
     QWidget *lineNumberArea;
 
     void setCurrentFile(const QString &fileName);
+    void finishRunner();
 
 protected:
     void wheelEvent(QWheelEvent *e);
@@ -48,11 +60,13 @@ private slots:
     void updateLineNumberArea(const QRect &, int);
     void updateLineColor(int colorID);
 
+    void scriptFinished();
+
 signals:
+    void statusChanged();
 
 public slots:
     void documentWasModified();
-
 };
 
 

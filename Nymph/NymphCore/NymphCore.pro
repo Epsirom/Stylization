@@ -1,20 +1,28 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2014-07-30T16:28:25
+# Project created by QtCreator 2014-08-01T15:41:35
 #
 #-------------------------------------------------
 
-QT       -= gui
+CONFIG += use_opencv
+
+include(../paths.pri)
+
+QT       += core gui
 
 TARGET = NymphCore
 TEMPLATE = lib
 
 DEFINES += NYMPHCORE_LIBRARY
 
-SOURCES += nymphcore.cpp
+SOURCES += nymphcore.cpp \
+    nymphcvbase.cpp \
+    nymphcore_export.cpp
 
 HEADERS += nymphcore.h\
-        nymphcore_global.h
+        nymphcore_global.h \
+    nymphcvbase.h \
+    nymphcore_export.h
 
 unix {
     target.path = /usr/lib

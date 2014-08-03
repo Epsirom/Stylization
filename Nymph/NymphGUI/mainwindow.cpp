@@ -9,6 +9,8 @@
 #include <QMimeData>
 #include <QTime>
 #include <QLineEdit>
+#include <QStringList>
+
 
 MainWindow* MainWindow::instance()
 {
@@ -23,8 +25,8 @@ MainWindow* MainWindow::instance()
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    resultWindow(),
-    runner(new NymphLua)
+    resultWindow()//,
+    //runner(NymphLua::instance())
 {
     ui->setupUi(this);
 
@@ -47,15 +49,43 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::appendLog(const QString &log)
+void MainWindow::appendLog(const QString &log, NymphLogType type)
 {
-    ui->logEdit->appendPlainText(QString("[%1] %2").arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))).arg(log));
+    static const QString colors[] = {"black", "orange", "red"};
+    QString color = colors[int(type)];
+
+    ui->logEdit->appendHtml(QString("<span style='color:%1'>[%2] %3</span>")
+                            .arg(color).arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))).arg(log));
+
     ui->logEdit->moveCursor(QTextCursor::End);
 }
 
 void MainWindow::executeCMD(const QString &cmd)
 {
-    appendLog(QString("Execute: %1").arg(cmd));
+    QStringList cmd_parts = cmd.split(" ");
+    if (cmd_parts.length() > 0)
+    {
+        QString ins = cmd_parts[0];
+        if (ins == "cls") {
+            ui->logEdit->clear();
+        } else if (ins == "run") {
+            if (activeMdiChild() != 0)
+                ui->action_run->trigger();
+            else
+                nymphWarning("No file opened! Run failed.");
+        } else if (ins == "edit") {
+            if (activeMdiChild() != 0)
+                activeMdiChild()->setFocus();
+            else
+                nymphWarning("No file opened! Edit failed.");
+        }
+    }
+}
+
+void MainWindow::updateResultWindow()
+{
+    NymphImagePack* pack = activeMdiChild()->getImagePack();
+    resultWindow.updateImages(pack);
 }
 
 void MainWindow::documentWasModified()
@@ -69,16 +99,18 @@ void MainWindow::documentWasModified()
 void MainWindow::iniConnect()
 {
     connect(activeMdiChild()->document(), &QTextDocument::contentsChanged, this, &MainWindow::documentWasModified);
+    connect(activeMdiChild(), &NymphEditor::statusChanged, this, &MainWindow::updateMenus);
 }
 
 void MainWindow::updateMenus()
 {
     bool hasMdiChild = (activeMdiChild() != 0);
-    bool canEdit = hasMdiChild && (!activeMdiChild()->isReadOnly());
+    bool isRunning = hasMdiChild && (activeMdiChild()->isRunning());
+    bool isModified = hasMdiChild && (activeMdiChild()->document()->isModified());
 
     ui->action_close_file->setEnabled(hasMdiChild || resultWindow.isActiveWindow());
-    ui->action_run->setEnabled(hasMdiChild && canEdit);
-    ui->action_save_file->setEnabled(hasMdiChild);
+    ui->action_run->setEnabled(hasMdiChild && !isRunning);
+    ui->action_save_file->setEnabled(hasMdiChild && isModified);
     ui->action_save_file_as->setEnabled(hasMdiChild);
 }
 
@@ -247,7 +279,7 @@ void MainWindow::on_action_close_file_triggered()
 
 void MainWindow::on_action_run_triggered()
 {
-
+    activeMdiChild()->startRunner();
 }
 
 void MainWindow::on_action_show_result_triggered()
