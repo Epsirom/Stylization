@@ -22,10 +22,12 @@ public:
     void appendLog(const QString &log, NymphLogType type = NYMPH_LOG_INFO);
     void executeCMD(const QString &cmd);
 
+    void showResultWindow(int id);
+
     static MainWindow* instance();
 
 public slots:
-    void updateResultWindow();
+    void updateResultWindow(int id);
 
 protected:
      void changeEvent(QEvent *e);
@@ -66,11 +68,10 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    ResultWindow resultWindow;
     NymphEditor * activeMdiChild();
+    NymphEditor * getMdiChild(int id);
     void iniConnect();
 
-    //NymphLua *runner;
 };
 
 #endif // MAINWINDOW_H

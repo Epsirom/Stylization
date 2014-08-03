@@ -54,6 +54,12 @@
      </property>
      <item>
       <widget class="NymphSingleViewer" name="sourceView">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="acceptDrops">
         <bool>false</bool>
        </property>
@@ -70,6 +76,12 @@
      </item>
      <item>
       <widget class="NymphSingleViewer" name="resultView">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="backgroundBrush">
         <brush brushstyle="SolidPattern">
          <color alpha="255">

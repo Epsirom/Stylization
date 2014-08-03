@@ -10,6 +10,7 @@
 #include <QTime>
 #include <QLineEdit>
 #include <QStringList>
+#include <QDebug>
 
 
 MainWindow* MainWindow::instance()
@@ -24,9 +25,7 @@ MainWindow* MainWindow::instance()
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    resultWindow()//,
-    //runner(NymphLua::instance())
+    ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
@@ -38,6 +37,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->mdiArea, &QMdiArea::subWindowActivated, this, &MainWindow::updateMenus);
     //connect(&resultWindow, &ResultWindow::windowActiveChanged, this, &MainWindow::updateMenus);
     connect(qApp, &QApplication::focusChanged, this, &MainWindow::updateMenus);
+
+    //connect(ui->mdiArea, &QMdiArea::subWindowActivated, this, &MainWindow::updateResultWindow);
 
     updateMenus();
 
@@ -82,10 +83,24 @@ void MainWindow::executeCMD(const QString &cmd)
     }
 }
 
-void MainWindow::updateResultWindow()
+void MainWindow::showResultWindow(int id)
 {
-    NymphImagePack* pack = activeMdiChild()->getImagePack();
-    resultWindow.updateImages(pack);
+    NymphEditor* editor = getMdiChild(id);
+    if (editor) {
+        editor->showResultWindow();
+    } else {
+        qWarning() << "No matched editor:" << id;
+    }
+}
+
+void MainWindow::updateResultWindow(int id)
+{
+    NymphEditor* editor = getMdiChild(id);
+    if (editor) {
+        editor->updateImages();
+    } else {
+        qWarning() << "No matched editor:" << id;
+    }
 }
 
 void MainWindow::documentWasModified()
@@ -99,6 +114,7 @@ void MainWindow::documentWasModified()
 void MainWindow::iniConnect()
 {
     connect(activeMdiChild()->document(), &QTextDocument::contentsChanged, this, &MainWindow::documentWasModified);
+    connect(activeMdiChild()->document(), &QTextDocument::contentsChanged, this, &MainWindow::updateMenus);
     connect(activeMdiChild(), &NymphEditor::statusChanged, this, &MainWindow::updateMenus);
 }
 
@@ -107,11 +123,22 @@ void MainWindow::updateMenus()
     bool hasMdiChild = (activeMdiChild() != 0);
     bool isRunning = hasMdiChild && (activeMdiChild()->isRunning());
     bool isModified = hasMdiChild && (activeMdiChild()->document()->isModified());
+    bool hasResultWindow = false;
+    foreach (QMdiSubWindow *window, ui->mdiArea->subWindowList())
+    {
+        NymphEditor *mdiChild = qobject_cast<NymphEditor *>(window->widget());
+        if (mdiChild->resultWindow.isActiveWindow())
+        {
+            hasResultWindow = true;
+            break;
+        }
+    }
 
-    ui->action_close_file->setEnabled(hasMdiChild || resultWindow.isActiveWindow());
+    ui->action_close_file->setEnabled(hasMdiChild || hasResultWindow);
     ui->action_run->setEnabled(hasMdiChild && !isRunning);
     ui->action_save_file->setEnabled(hasMdiChild && isModified);
     ui->action_save_file_as->setEnabled(hasMdiChild);
+    ui->action_show_result->setEnabled(hasMdiChild);
 }
 
 void MainWindow::highLightCurrentLine()
@@ -137,6 +164,19 @@ NymphEditor* MainWindow::activeMdiChild()
     if (QMdiSubWindow *activeSubWindow = ui->mdiArea->activeSubWindow())
         return qobject_cast<NymphEditor *>(activeSubWindow->widget());
     return NULL;
+}
+
+NymphEditor* MainWindow::getMdiChild(int id)
+{
+    foreach (QMdiSubWindow *window, ui->mdiArea->subWindowList())
+    {
+        NymphEditor *mdiChild = qobject_cast<NymphEditor *>(window->widget());
+        if (mdiChild->_id == id)
+        {
+            return mdiChild;
+        }
+    }
+    return 0;
 }
 
 void MainWindow::changeEvent(QEvent *e)
@@ -193,7 +233,7 @@ void MainWindow::dropEvent(QDropEvent *event)
     }
     if(!hasOpened)
     {
-        NymphEditor *child = new NymphEditor;
+        NymphEditor *child = NymphEditor::instance();
         ui->mdiArea->addSubWindow(child);
         if(child->loadFile(fileName))
         {
@@ -207,7 +247,7 @@ void MainWindow::dropEvent(QDropEvent *event)
 
 void MainWindow::on_action_new_file_triggered()
 {
-    NymphEditor *child = new NymphEditor;
+    NymphEditor *child = NymphEditor::instance();
     ui->mdiArea->addSubWindow(child);
     child->newFile();
     child->setVisible(true);
@@ -250,7 +290,7 @@ void MainWindow::on_action_open_file_triggered()
         }
         if(!hasOpened)
         {
-            NymphEditor *child = new NymphEditor;
+            NymphEditor *child = NymphEditor::instance();
             ui->mdiArea->addSubWindow(child);
             if(child->loadFile(fileName))
             {
@@ -267,14 +307,16 @@ void MainWindow::on_action_open_file_triggered()
 
 void MainWindow::on_action_close_file_triggered()
 {
-    if (resultWindow.isActiveWindow())
+    foreach (QMdiSubWindow *window, ui->mdiArea->subWindowList())
     {
-        resultWindow.close();
+        NymphEditor *mdiChild = qobject_cast<NymphEditor *>(window->widget());
+        if (mdiChild->resultWindow.isActiveWindow())
+        {
+            mdiChild->resultWindow.close();
+            return;
+        }
     }
-    else
-    {
-        ui->mdiArea->closeActiveSubWindow();
-    }
+    ui->mdiArea->closeActiveSubWindow();
 }
 
 void MainWindow::on_action_run_triggered()
@@ -284,13 +326,7 @@ void MainWindow::on_action_run_triggered()
 
 void MainWindow::on_action_show_result_triggered()
 {
-    if (resultWindow.isHidden())
-        resultWindow.show();
-    else
-    {
-        resultWindow.activateWindow();
-        resultWindow.raise();
-    }
+    activeMdiChild()->showResultWindow();
 }
 
 void MainWindow::on_action_about_me_triggered()

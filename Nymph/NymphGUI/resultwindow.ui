@@ -48,7 +48,14 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="NymphViewer" name="styleViewer" native="true"/>
+       <widget class="NymphViewer" name="styleViewer" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Ignored">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -72,7 +79,14 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="NymphViewer" name="resultViewer" native="true"/>
+       <widget class="NymphViewer" name="resultViewer" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Ignored">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>

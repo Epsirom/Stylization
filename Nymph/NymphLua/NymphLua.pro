@@ -16,13 +16,11 @@ TEMPLATE = lib
 DEFINES += NYMPHLUA_LIBRARY
 
 SOURCES += nymphlua.cpp \
-    nymphlua_ext.cpp \
-    nymphimagemanager.cpp
+    nymphlua_ext.cpp
 
 HEADERS += nymphlua.h\
         nymphlua_global.h \
-    nymphlua_ext.h \
-    nymphimagemanager.h
+    nymphlua_ext.h
 
 unix {
     target.path = /usr/lib

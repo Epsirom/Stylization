@@ -7,10 +7,19 @@
 #include <QScrollBar>
 #include "nymphgui_global.h"
 #include "nympheditor.h"
+#include "mainwindow.h"
 
-NymphEditor::NymphEditor(QWidget *parent) :
+NymphEditor* NymphEditor::instance(QWidget *parent)
+{
+    static int _editor_id = -1;
+    return new NymphEditor(++_editor_id, parent);
+}
+
+NymphEditor::NymphEditor(int id, QWidget *parent) :
     QPlainTextEdit(parent),
-    runner(),
+    runner(id),
+    resultWindow(id),
+    _id(id),
     _isRunning(false),
     curFile()
 {
@@ -32,19 +41,41 @@ NymphEditor::NymphEditor(QWidget *parent) :
     highlightCurrentLine();
 }
 
+void NymphEditor::showResultWindow()
+{
+    if (resultWindow.isHidden())
+        resultWindow.show();
+    else
+    {
+        resultWindow.activateWindow();
+        resultWindow.raise();
+    }
+}
+
+void NymphEditor::updateImages()
+{
+    resultWindow.updateResultWindow(
+                runner.getPixmap(QString("style_in")),
+                runner.getPixmap(QString("style_out")),
+                runner.getPixmap(QString("nymph_in")),
+                runner.getPixmap(QString("nymph_out"))
+                );
+}
+
 void NymphEditor::startRunner()
 {
+    QString filename = QFileInfo(curFile).fileName();
     if (_isRunning)
     {
-        nymphError(QString("%1 is already running.").arg(curFile));
+        nymphError(QString("%1 is already running.").arg(filename));
     }
     else
     {
         _isRunning = true;
         setReadOnly(true);
-        runner.script_name = curFile;
+        runner.script_name = filename;
         runner.script_buffer = toPlainText();
-        nymphLog(QString("Start running %1").arg(curFile));
+        nymphLog(QString("Start running %1").arg(filename));
         runner.start();
     }
     emit statusChanged();
@@ -167,11 +198,9 @@ void NymphEditor::zoomOut(int step)
 
 void NymphEditor::newFile()
 {
-    static int sequenceNumber = 1;
-
     isUntitled = true;
-    curFile = tr("untitled %1").arg(sequenceNumber++);
-    setWindowTitle(curFile + "[*]");
+    curFile = tr("untitled");
+    setWindowTitle(QString("%1 - ").arg(_id) + curFile + "[*]");
 }
 
 bool NymphEditor::loadFile(const QString &fileName)
@@ -257,7 +286,7 @@ void NymphEditor::setCurrentFile(const QString &fileName)
     isUntitled = false;
     document()->setModified(false);
     setWindowModified(false);
-    setWindowTitle(QFileInfo(fileName).fileName() + "[*]");
+    setWindowTitle(QString("%1 - ").arg(_id) + QFileInfo(fileName).fileName() + "[*]");
 }
 
 void NymphEditor::documentWasModified()

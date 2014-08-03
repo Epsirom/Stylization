@@ -1,9 +1,9 @@
 #include "nymphrunner.h"
 
 
-NymphRunner::NymphRunner(QObject *parent) :
+NymphRunner::NymphRunner(int id, QObject *parent) :
     QThread(parent),
-    runner()
+    runner(id)
 {
 
 }
@@ -13,7 +13,7 @@ void NymphRunner::run()
     result_err = runner.run(script_buffer, script_name);
 }
 
-NymphImagePack* NymphRunner::getImages()
+QPixmap NymphRunner::getPixmap(const QString name)
 {
-    return runner.getImagePack();
+    return runner.getPixmap(name);
 }

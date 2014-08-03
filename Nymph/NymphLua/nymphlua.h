@@ -2,28 +2,27 @@
 #define NYMPHLUA_H
 
 #include "nymphlua_global.h"
-#include "nymphimagemanager.h"
 
-#include <QStringList>
+#include <QPixmap>
 
 class NYMPHLUASHARED_EXPORT NymphLua
 {
 
 public:
     static NymphLua* instance();
-    NymphLua();
+    NymphLua(int id = -1);
     ~NymphLua();
 
     QString run(const QString& script, const QString &name);
 
-    NymphImagePack* getImagePack();
+    QPixmap getPixmap(const QString& name);
 
 private:
     void reset();
     void close();
 
     struct lua_State* L;
-    int image_id;
+    int nymph_id;
 };
 
 #endif // NYMPHLUA_H

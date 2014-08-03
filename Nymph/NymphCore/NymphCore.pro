@@ -17,12 +17,12 @@ DEFINES += NYMPHCORE_LIBRARY
 
 SOURCES += nymphcore.cpp \
     nymphcvbase.cpp \
-    nymphcore_export.cpp
+    nymphmanager.cpp
 
 HEADERS += nymphcore.h\
         nymphcore_global.h \
     nymphcvbase.h \
-    nymphcore_export.h
+    nymphmanager.h
 
 unix {
     target.path = /usr/lib

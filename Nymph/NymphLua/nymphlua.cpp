@@ -3,6 +3,7 @@
 #include "nymphlua.h"
 
 #include "nymphlua_ext.h"
+#include "nymphmanager.h"
 
 
 NymphLua* NymphLua::instance()
@@ -18,16 +19,18 @@ NymphLua* NymphLua::instance()
     */
 }
 
-NymphLua::NymphLua()
+NymphLua::NymphLua(int id)
     : L(0),
-      image_id(-1)
+      nymph_id(id)
 {
-
+    NymphManager::instance()->initNymph(id);
 }
 
 NymphLua::~NymphLua()
 {
     close();
+    NymphManager::instance()->releaseNymph(nymph_id);
+    nymph_id = -1;
 }
 
 QString NymphLua::run(const QString &script, const QString &name)
@@ -36,9 +39,8 @@ QString NymphLua::run(const QString &script, const QString &name)
     lua_pushstring(L, name.toLatin1().data());
     lua_setglobal(L, "___nymphlua_name");
 
-    image_id = NymphImageManager::instance()->applySpace();
-    lua_pushinteger(L, image_id);
-    lua_setglobal(L, "___nymphlua_image_id");
+    lua_pushinteger(L, nymph_id);
+    lua_setglobal(L, "___nymphlua_id");
 
     bool err = luaL_loadbuffer(L, script.toLatin1().data(), script.length(), name.toLatin1().data()) || lua_pcall(L, 0, 0, 0);
     if (err)
@@ -56,6 +58,7 @@ QString NymphLua::run(const QString &script, const QString &name)
 void NymphLua::reset()
 {
     close();
+    NymphManager::instance()->resetNymph(nymph_id);
     L = lua_open();
     luaL_openlibs(L);
 
@@ -66,20 +69,24 @@ void NymphLua::reset()
     lua_setglobal(L, "loadimage");
     lua_pushcfunction(L, luaext_syncview);
     lua_setglobal(L, "syncview");
+    lua_pushcfunction(L, luaext_showresult);
+    lua_setglobal(L, "showresult");
+    lua_pushcfunction(L, luaext_assignmat);
+    lua_setglobal(L, "assignmat");
+    lua_pushcfunction(L, luaext_copymat);
+    lua_setglobal(L, "copymat");
 }
 
 void NymphLua::close()
 {
     if (L)
     {
-        NymphImageManager::instance()->releasePack(image_id);
         lua_close(L);
-        image_id = -1;
         L = 0;
     }
 }
 
-NymphImagePack* NymphLua::getImagePack()
+QPixmap NymphLua::getPixmap(const QString &name)
 {
-    return NymphImageManager::instance()->getPack(image_id);
+    return NymphManager::instance()->getPixmap(nymph_id, name.toStdString());
 }

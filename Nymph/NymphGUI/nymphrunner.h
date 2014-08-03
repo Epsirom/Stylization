@@ -8,14 +8,14 @@ class NymphRunner : public QThread
 {
     Q_OBJECT
 public:
-    explicit NymphRunner(QObject *parent = 0);
+    explicit NymphRunner(int id = -1, QObject *parent = 0);
 
     QString script_buffer;
     QString script_name;
 
     QString result_err;
 
-    NymphImagePack* getImages();
+    QPixmap getPixmap(const QString name);
 
 protected:
     void run();

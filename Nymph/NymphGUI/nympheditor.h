@@ -3,13 +3,16 @@
 
 #include <QPlainTextEdit>
 #include "nymphrunner.h"
-#include "nymphimagemanager.h"
+#include "resultwindow.h"
 
 class NymphEditor : public QPlainTextEdit
 {
+    friend class MainWindow;
+
     Q_OBJECT
 public:
-    explicit NymphEditor(QWidget *parent = 0);
+    static NymphEditor* instance(QWidget *parent = 0);
+    explicit NymphEditor(int id, QWidget *parent = 0);
 
     void newFile();
     bool loadFile(const QString &fileName);
@@ -33,10 +36,15 @@ public:
 
     bool isRunning() {return _isRunning;}
 
-    NymphImagePack* getImagePack() { return runner.getImages(); }
+    void showResultWindow();
+
+    void updateImages();
 
 private:
     NymphRunner runner;
+    ResultWindow resultWindow;
+
+    int _id;
 
     bool isUntitled;
     bool _isRunning;
