@@ -67,7 +67,7 @@ void MainWindow::executeCMD(const QString &cmd)
     if (cmd_parts.length() > 0)
     {
         QString ins = cmd_parts[0];
-        if (ins == "cls") {
+        if (ins == "cls" || ins == "clc") {
             ui->logEdit->clear();
         } else if (ins == "run") {
             if (activeMdiChild() != 0)

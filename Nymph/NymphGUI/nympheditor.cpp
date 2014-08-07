@@ -23,6 +23,9 @@ NymphEditor::NymphEditor(int id, QWidget *parent) :
     _isRunning(false),
     curFile()
 {
+    setFont(QFont("Monaco", 15));   // Not for Windows.
+
+
     linesExecuted = 0;
     setAcceptDrops(false);
     setAttribute(Qt::WA_DeleteOnClose);
@@ -67,7 +70,7 @@ void NymphEditor::startRunner()
     QString filename = QFileInfo(curFile).fileName();
     if (_isRunning)
     {
-        nymphError(QString("%1 is already running.").arg(filename));
+        nymphError(QString("%1_%2 is already running.").arg(_id).arg(filename));
     }
     else
     {
@@ -75,7 +78,7 @@ void NymphEditor::startRunner()
         setReadOnly(true);
         runner.script_name = filename;
         runner.script_buffer = toPlainText();
-        nymphLog(QString("Start running %1").arg(filename));
+        nymphLog(QString("Start running %1_%2").arg(_id).arg(filename));
         runner.start();
     }
     emit statusChanged();
@@ -95,7 +98,7 @@ void NymphEditor::scriptFinished()
         nymphError(QString("Error occured when running %1.").arg(runner.script_name));
         nymphError(QString("Error details: \r\n%1").arg(runner.result_err));
     }
-    nymphLog(QString("Finish running %1").arg(runner.script_name));
+    nymphLog(QString("Finish running %1_%2").arg(_id).arg(runner.script_name));
     _isRunning = false;
     setReadOnly(false);
     emit statusChanged();
@@ -321,6 +324,9 @@ void NymphEditor::closeEvent(QCloseEvent *event)
                                  QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) {
             event->ignore();
             return;
+        } else {
+            runner.terminate();
+            runner.wait();
         }
     }
     if (closeDocument()) {

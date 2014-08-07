@@ -11,8 +11,8 @@ NymphSingleViewer::NymphSingleViewer(QWidget *parent) :
 {
     QGraphicsScene * scn = new QGraphicsScene(this);
     this->setScene( scn );
-    QPixmap pix( ":/default_img" );
-    setImage(pix);
+    //QPixmap pix( ":/default_img" );
+    //setImage(pix);
 
     this->grabGesture(Qt::PinchGesture);
 }

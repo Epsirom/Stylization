@@ -16,6 +16,11 @@ NymphManager* NymphManager::instance()
     return _instance;
 }
 
+NymphManager& NymphManager::insobj()
+{
+    return *(NymphManager::instance());
+}
+
 NymphManager::NymphManager()
     : _storage()
 {
@@ -65,4 +70,23 @@ void NymphManager::aliasMat(int id, const string new_name, const string old_name
 void NymphManager::copyMat(int id, const string new_name, const string old_name)
 {
     _storage[id][old_name].copyTo(_storage[id][new_name]);
+}
+
+NymphMatSize NymphManager::getSize(int id, const string name)
+{
+    NymphMatSize sz;
+    Mat& m = _storage[id][name];
+    sz.rows = m.rows;
+    sz.cols = m.cols;
+    return sz;
+}
+
+map<string, Mat> & NymphManager::operator[] (int id)
+{
+    return _storage[id];
+}
+
+Mat & NymphManager::operator() (int id, const string name)
+{
+    return _storage[id][name];
 }

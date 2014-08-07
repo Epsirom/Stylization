@@ -63,18 +63,7 @@ void NymphLua::reset()
     luaL_openlibs(L);
 
     // Register NymphLua functions.
-    lua_pushcfunction(L, luaext_cprint);
-    lua_setglobal(L, "cprint");
-    lua_pushcfunction(L, luaext_loadimg);
-    lua_setglobal(L, "loadimage");
-    lua_pushcfunction(L, luaext_syncview);
-    lua_setglobal(L, "syncview");
-    lua_pushcfunction(L, luaext_showresult);
-    lua_setglobal(L, "showresult");
-    lua_pushcfunction(L, luaext_assignmat);
-    lua_setglobal(L, "assignmat");
-    lua_pushcfunction(L, luaext_copymat);
-    lua_setglobal(L, "copymat");
+    LUA_EXT_DECLARE_FUNCTIONS;
 }
 
 void NymphLua::close()
