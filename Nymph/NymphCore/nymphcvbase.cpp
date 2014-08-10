@@ -5,6 +5,8 @@
 
 namespace Nymph
 {
+
+
 QImage cvMatToQImage( const cv::Mat &inMat )
 {
     switch ( inMat.type() )
@@ -56,4 +58,6 @@ QPixmap cvMatToQPixmap( const cv::Mat &inMat )
 {
     return QPixmap::fromImage( cvMatToQImage( inMat ) );
 }
+
+
 }

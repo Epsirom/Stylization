@@ -13,6 +13,8 @@ public:
     QString script_buffer;
     QString script_name;
 
+    bool isExecuteCMD;
+
     QString result_err;
 
     QPixmap getPixmap(const QString name);

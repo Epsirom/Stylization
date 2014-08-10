@@ -8,11 +8,11 @@ int nymph_lua_print(int id, const char* name, const char* str)
 {
     if (QString(str).startsWith("[warning]"))
     {
-        nymphWarning(QString("[%1 - %2] %3").arg(id).arg(name).arg(str + 9));
+        nymphWarning(QString("[%1_%2] %3").arg(id).arg(name).arg(str + 9));
     }
     else
     {
-        nymphLog(QString("[%1 - %2] %3").arg(id).arg(name).arg(str));
+        nymphLog(QString("[%1_%2] %3").arg(id).arg(name).arg(str));
     }
     return 0;
 }

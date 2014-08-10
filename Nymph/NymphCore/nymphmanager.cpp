@@ -52,7 +52,7 @@ void NymphManager::loadFile(const string filename, int id, const string image_na
     _storage[id][image_name] = tmp;
 }
 
-Mat NymphManager::getMat(int id, const string image_name)
+Mat& NymphManager::getMat(int id, const string image_name)
 {
     return _storage[id][image_name];
 }
@@ -79,6 +79,11 @@ NymphMatSize NymphManager::getSize(int id, const string name)
     sz.rows = m.rows;
     sz.cols = m.cols;
     return sz;
+}
+
+NymphCore& NymphManager::getCore(int id)
+{
+    return _core[id];
 }
 
 map<string, Mat> & NymphManager::operator[] (int id)

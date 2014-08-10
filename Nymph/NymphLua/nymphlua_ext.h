@@ -2,6 +2,7 @@
 #define NYMPHLUA_EXT_H
 
 #include "nymphlua_global.h"
+#include <cstring>
 
 #define LUA_EXT_FUNC_PARAM      struct lua_State* l
 #define LUA_EXT_FUNC(f)         int luaext_##f(LUA_EXT_FUNC_PARAM)
@@ -47,6 +48,7 @@ LUA_EXT_INSTALL_FUNC(print);
 LUA_EXT_INSTALL_FUNC(syncview);
 LUA_EXT_INSTALL_FUNC(showresult);
 
+LUA_EXT_FUNC(empty);
 LUA_EXT_FUNC(cprint);
 LUA_EXT_FUNC(loadimage);
 LUA_EXT_FUNC(syncview);
@@ -54,9 +56,16 @@ LUA_EXT_FUNC(showresult);
 LUA_EXT_FUNC(copymat);
 LUA_EXT_FUNC(assignmat);
 LUA_EXT_FUNC(imgsize);
-
+LUA_EXT_FUNC(patchANN);
+LUA_EXT_FUNC(energy);
+LUA_EXT_FUNC(markpatch);
+LUA_EXT_FUNC(markcorpatch);
+LUA_EXT_FUNC(imshow);
+LUA_EXT_FUNC(saveimage);
+void imhide(std::string window_name = std::string());
 
 #define LUA_EXT_DECLARE_FUNCTIONS \
+    LUA_EXT_PUSH_FUNC(empty); \
     LUA_EXT_PUSH_FUNC(cprint); \
     LUA_EXT_PUSH_FUNC(loadimage); \
     LUA_EXT_PUSH_FUNC(syncview); \
@@ -64,6 +73,12 @@ LUA_EXT_FUNC(imgsize);
     LUA_EXT_PUSH_FUNC(copymat); \
     LUA_EXT_PUSH_FUNC(assignmat); \
     LUA_EXT_PUSH_FUNC(imgsize); \
+    LUA_EXT_PUSH_FUNC(patchANN); \
+    LUA_EXT_PUSH_FUNC(energy); \
+    LUA_EXT_PUSH_FUNC(markpatch); \
+    LUA_EXT_PUSH_FUNC(markcorpatch); \
+    LUA_EXT_PUSH_FUNC(imshow); \
+    LUA_EXT_PUSH_FUNC(saveimage); \
 
 
 #endif // NYMPHLUA_EXT_H

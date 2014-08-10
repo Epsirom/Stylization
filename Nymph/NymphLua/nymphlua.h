@@ -14,6 +14,7 @@ public:
     ~NymphLua();
 
     QString run(const QString& script, const QString &name);
+    QString executeCMD(const QString& cmd, const QString &name);
 
     QPixmap getPixmap(const QString& name);
 

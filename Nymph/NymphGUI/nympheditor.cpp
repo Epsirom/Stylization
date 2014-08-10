@@ -8,6 +8,7 @@
 #include "nymphgui_global.h"
 #include "nympheditor.h"
 #include "mainwindow.h"
+#include <QDebug>
 
 NymphEditor* NymphEditor::instance(QWidget *parent)
 {
@@ -23,6 +24,8 @@ NymphEditor::NymphEditor(int id, QWidget *parent) :
     _isRunning(false),
     curFile()
 {
+    setTabStopWidth(40);
+    setCenterOnScroll(true);
     setFont(QFont("Monaco", 15));   // Not for Windows.
 
 
@@ -84,6 +87,26 @@ void NymphEditor::startRunner()
     emit statusChanged();
 }
 
+void NymphEditor::executeCMD(const QString &cmd)
+{
+    QString filename = QFileInfo(curFile).fileName();
+    if (_isRunning)
+    {
+        nymphError(QString("Already running, can not execute command: %1").arg(cmd));
+    }
+    else
+    {
+        _isRunning = true;
+        setReadOnly(true);
+        runner.script_name = filename;
+        runner.isExecuteCMD = true;
+        runner.script_buffer = cmd;
+        nymphLog(QString("[%1_%2]Execute: %3").arg(_id).arg(filename).arg(cmd));
+        runner.start();
+    }
+    emit statusChanged();
+}
+
 void NymphEditor::finishRunner()
 {
     _isRunning = false;
@@ -98,7 +121,13 @@ void NymphEditor::scriptFinished()
         nymphError(QString("Error occured when running %1.").arg(runner.script_name));
         nymphError(QString("Error details: \r\n%1").arg(runner.result_err));
     }
-    nymphLog(QString("Finish running %1_%2").arg(_id).arg(runner.script_name));
+    if (runner.isExecuteCMD)
+    {
+        runner.isExecuteCMD = false;
+        nymphLog(QString("[%1_%2]Executed: %3").arg(_id).arg(runner.script_name).arg(runner.script_buffer));
+    }
+    else
+        nymphLog(QString("Finish running %1_%2").arg(_id).arg(runner.script_name));
     _isRunning = false;
     setReadOnly(false);
     emit statusChanged();
@@ -256,7 +285,7 @@ bool NymphEditor::save()
 bool NymphEditor::saveAs()
 {
     QString fileName = QFileDialog::getSaveFileName(
-            this,tr("Save as"),curFile,tr(AVAILABLE_FILE_TYPES));
+            this,tr("Save as"),curFile,tr(AVAILABLE_SAVE_FILE_TYPES));
 
     if (fileName.isEmpty())
         return false;
@@ -306,14 +335,15 @@ void NymphEditor::wheelEvent(QWheelEvent *e)
             else
                 this->zoomOut(1);
     }
-    else//实现文本的上下滚动
+    else
     {
-         if(e->delta() > 0 )//上滚
-             this->verticalScrollBar()->setValue(this->verticalScrollBar()->value()-3);
-         else
-             this->verticalScrollBar()->setValue(this->verticalScrollBar()->value()+3);
-
+        QPlainTextEdit::wheelEvent(e);
     }
+}
+
+void NymphEditor::scrollContentsBy(int dx, int dy)
+{
+    QPlainTextEdit::scrollContentsBy(dx, dy);
 }
 
 void NymphEditor::closeEvent(QCloseEvent *event)

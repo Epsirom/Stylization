@@ -10,7 +10,12 @@ NymphRunner::NymphRunner(int id, QObject *parent) :
 
 void NymphRunner::run()
 {
-    result_err = runner.run(script_buffer, script_name);
+    if (isExecuteCMD)
+    {
+        result_err = runner.executeCMD(script_buffer, script_name);
+    }
+    else
+        result_err = runner.run(script_buffer, script_name);
 }
 
 QPixmap NymphRunner::getPixmap(const QString name)

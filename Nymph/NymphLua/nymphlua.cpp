@@ -55,6 +55,30 @@ QString NymphLua::run(const QString &script, const QString &name)
     }
 }
 
+QString NymphLua::executeCMD(const QString &cmd, const QString &name)
+{
+    if (!L)
+    {
+        reset();
+        lua_pushstring(L, name.toLatin1().data());
+        lua_setglobal(L, "___nymphlua_name");
+
+        lua_pushinteger(L, nymph_id);
+        lua_setglobal(L, "___nymphlua_id");
+    }
+    bool err = luaL_loadbuffer(L, cmd.toLatin1().data(), cmd.length(), name.toLatin1().data()) || lua_pcall(L, 0, 0, 0);
+    if (err)
+    {
+        QString errinfo(lua_tostring(L, -1));
+        lua_pop(L, 1);
+        return errinfo;
+    }
+    else
+    {
+        return QString();
+    }
+}
+
 void NymphLua::reset()
 {
     close();

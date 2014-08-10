@@ -3,7 +3,8 @@
 
 #include <QString>
 
-#define AVAILABLE_FILE_TYPES "Nymph Lua Script Files(*.nl)"";;Nymph Lua Module Files(*.lua)"";;All Files(*.*)"
+#define AVAILABLE_OPEN_FILE_TYPES "Nymph Lua Script Files(*.nl;*.lua)"";;All Files(*.*)"
+#define AVAILABLE_SAVE_FILE_TYPES "Nymph Lua Script Files(*.nl)"";;Nymph Lua Module Files(*.lua)"";;All Files(*.*)"
 
 typedef enum nymph_log_type {
     NYMPH_LOG_INFO = 0,

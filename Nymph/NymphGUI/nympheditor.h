@@ -33,6 +33,7 @@ public:
     void zoomOut(int step);
 
     void startRunner();
+    void executeCMD(const QString& cmd);
 
     bool isRunning() {return _isRunning;}
 
@@ -58,6 +59,7 @@ private:
 
 protected:
     void wheelEvent(QWheelEvent *e);
+    void scrollContentsBy(int dx, int dy);
     void closeEvent(QCloseEvent *event);
     //void setWindowTitle(const QString & newTitle);
     void resizeEvent(QResizeEvent *e);

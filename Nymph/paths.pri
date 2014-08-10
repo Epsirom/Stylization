@@ -2,6 +2,7 @@
 # Common settings for OS X
 unix {
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.9
+    QMAKE_CXXFLAGS += -std=c++11
 }
 
 # Library settings
@@ -17,5 +18,7 @@ use_opencv {
             -lopencv_highgui \
             -lopencv_imgproc \
             -lopencv_features2d \
+            -lopencv_nonfree \
+            -lopencv_flann \
             -lstdc++
 }

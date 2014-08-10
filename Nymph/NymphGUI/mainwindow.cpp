@@ -12,6 +12,7 @@
 #include <QStringList>
 #include <QDebug>
 
+#include "nymphlua_ext.h"
 
 MainWindow* MainWindow::instance()
 {
@@ -29,10 +30,14 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ui->infos->hide();  // Unavailable currently.
+
     QSplitter *splitterMain = new QSplitter(Qt::Horizontal, this);
     splitterMain->addWidget(ui->mdiWidget);
     splitterMain->addWidget(ui->logWidget);
     this->setCentralWidget(splitterMain);
+
+    connect(this, &MainWindow::appendLogSignal, this, &MainWindow::appendLog, Qt::QueuedConnection);
 
     connect(ui->mdiArea, &QMdiArea::subWindowActivated, this, &MainWindow::updateMenus);
     //connect(&resultWindow, &ResultWindow::windowActiveChanged, this, &MainWindow::updateMenus);
@@ -50,15 +55,34 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::appendLog(const QString &log, NymphLogType type)
+void MainWindow::appendInfo(const QString &log)
+{
+    emit appendLogSignal(log, NYMPH_LOG_INFO);
+}
+
+void MainWindow::appendWarning(const QString &log)
+{
+    emit appendLogSignal(log, NYMPH_LOG_WARNING);
+}
+
+void MainWindow::appendError(const QString &log)
+{
+    emit appendLogSignal(log, NYMPH_LOG_ERROR);
+}
+
+void MainWindow::appendLog(const QString &log, int type)
 {
     static const QString colors[] = {"black", "orange", "red"};
+                                    // INFO, WARNING, ERROR
     QString color = colors[int(type)];
+
+    //qDebug() << log;
 
     ui->logEdit->appendHtml(QString("<span style='color:%1'>[%2] %3</span>")
                             .arg(color).arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))).arg(log));
 
     ui->logEdit->moveCursor(QTextCursor::End);
+
 }
 
 void MainWindow::executeCMD(const QString &cmd)
@@ -79,6 +103,18 @@ void MainWindow::executeCMD(const QString &cmd)
                 activeMdiChild()->setFocus();
             else
                 nymphWarning("No file opened! Edit failed.");
+        } else if (ins == "imhideall") {
+            imhide();
+        } else if (ins == "imhide") {
+            if (cmd_parts.length() != 2)
+                nymphWarning("Wrong format! Usage: imhide window_name");
+            else
+                imhide(cmd_parts[1].toStdString());
+        } else {
+            if (activeMdiChild() != 0)
+                activeMdiChild()->executeCMD(cmd);
+            else
+                nymphWarning("No file opened! Execute command failed.");
         }
     }
 }
@@ -136,7 +172,7 @@ void MainWindow::updateMenus()
 
     ui->action_close_file->setEnabled(hasMdiChild || hasResultWindow);
     ui->action_run->setEnabled(hasMdiChild && !isRunning);
-    ui->action_save_file->setEnabled(hasMdiChild && isModified);
+    ui->action_save_file->setEnabled(hasMdiChild);
     ui->action_save_file_as->setEnabled(hasMdiChild);
     ui->action_show_result->setEnabled(hasMdiChild);
 }
@@ -273,7 +309,7 @@ void MainWindow::on_action_save_file_as_triggered()
 void MainWindow::on_action_open_file_triggered()
 {
     QString fileName = QFileDialog::getOpenFileName
-        (this,"open file",NULL,tr(AVAILABLE_FILE_TYPES));
+        (this,"open file",NULL,tr(AVAILABLE_OPEN_FILE_TYPES));
     if(!fileName.isEmpty())
     {
         QString canonicalFilePath = QFileInfo(fileName).canonicalFilePath();

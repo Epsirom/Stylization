@@ -19,15 +19,21 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void appendLog(const QString &log, NymphLogType type = NYMPH_LOG_INFO);
     void executeCMD(const QString &cmd);
 
     void showResultWindow(int id);
+    void appendInfo(const QString &log);
+    void appendWarning(const QString &log);
+    void appendError(const QString &log);
 
     static MainWindow* instance();
 
 public slots:
     void updateResultWindow(int id);
+    void appendLog(const QString &log, int type = NYMPH_LOG_INFO);
+
+signals:
+    void appendLogSignal(const QString &log, int type);
 
 protected:
      void changeEvent(QEvent *e);
