@@ -62,6 +62,8 @@ LUA_EXT_FUNC(markpatch);
 LUA_EXT_FUNC(markcorpatch);
 LUA_EXT_FUNC(imshow);
 LUA_EXT_FUNC(saveimage);
+LUA_EXT_FUNC(set_energy);
+LUA_EXT_FUNC(set_patch_energy);
 void imhide(std::string window_name = std::string());
 
 #define LUA_EXT_DECLARE_FUNCTIONS \
@@ -79,6 +81,8 @@ void imhide(std::string window_name = std::string());
     LUA_EXT_PUSH_FUNC(markcorpatch); \
     LUA_EXT_PUSH_FUNC(imshow); \
     LUA_EXT_PUSH_FUNC(saveimage); \
+    LUA_EXT_PUSH_FUNC(set_energy); \
+    LUA_EXT_PUSH_FUNC(set_patch_energy); \
 
 
 #endif // NYMPHLUA_EXT_H

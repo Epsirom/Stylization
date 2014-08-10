@@ -121,7 +121,7 @@ LUA_EXT_FUNC(patchANN)
     LUA_EXT_GET_NYMPH_ID(nymph_id);
 
     NymphManager& img = NymphManager::insobj();
-    Nymph::PatchANN(img(nymph_id, src_img), img(nymph_id, dst_img), patch_radius, img(nymph_id, cor_img));
+    Nymph::PatchANN(img.getPatchEnergy(nymph_id), img(nymph_id, src_img), img(nymph_id, dst_img), patch_radius, img(nymph_id, cor_img));
 
     return 0;
 }
@@ -161,7 +161,7 @@ LUA_EXT_FUNC(energy)
     LUA_EXT_GET_NYMPH_ID(nymph_id);
 
     NymphManager& img = NymphManager::insobj();
-    double energy = Nymph::Energy(img(nymph_id, src_img), img(nymph_id, dst_img), patch_radius, img(nymph_id, cor_img), centers);
+    double energy = Nymph::EnergyWrapper(img.getEnergy(nymph_id), img(nymph_id, src_img), img(nymph_id, dst_img), patch_radius, img(nymph_id, cor_img), centers);
 
     LUA_EXT_RETURN_START;
     LUA_EXT_RETURN_DOUBLE(energy);
@@ -277,6 +277,39 @@ LUA_EXT_FUNC(saveimage)
 
     return 0;
 }
+
+LUA_EXT_FUNC(set_energy)
+{
+    LUA_EXT_GET_PARAM_START(1);
+    LUA_EXT_GET_STRING(func_name);
+    LUA_EXT_GET_PARAM_END;
+
+    LUA_EXT_GET_NYMPH_ID(nymph_id);
+
+    auto mgr = NymphManager::instance();
+    int result = mgr->setEnergyFunc(nymph_id, func_name);
+
+    LUA_EXT_RETURN_START;
+    LUA_EXT_RETURN_INT(result);
+    LUA_EXT_RETURN_END;
+}
+
+LUA_EXT_FUNC(set_patch_energy)
+{
+    LUA_EXT_GET_PARAM_START(1);
+    LUA_EXT_GET_STRING(func_name);
+    LUA_EXT_GET_PARAM_END;
+
+    LUA_EXT_GET_NYMPH_ID(nymph_id);
+
+    auto mgr = NymphManager::instance();
+    int result = mgr->setPatchEnergyFunc(nymph_id, func_name);
+
+    LUA_EXT_RETURN_START;
+    LUA_EXT_RETURN_INT(result);
+    LUA_EXT_RETURN_END;
+}
+
 
 void imhide(std::string window_name)
 {

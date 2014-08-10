@@ -28,7 +28,7 @@ NymphManager::NymphManager()
 
 void NymphManager::initNymph(int id)
 {
-    _storage[id] = map<string, Mat>();
+    _storage[id];
 }
 
 void NymphManager::releaseNymph(int id)
@@ -38,44 +38,44 @@ void NymphManager::releaseNymph(int id)
 
 void NymphManager::resetNymph(int id)
 {
-    _storage[id].clear();
+    _storage[id].mat.clear();
 }
 
 void NymphManager::store(Mat& m, int id, const string image_name)
 {
-    _storage[id][image_name] = m;
+    _storage[id].mat[image_name] = m;
 }
 
 void NymphManager::loadFile(const string filename, int id, const string image_name)
 {
     Mat tmp = imread(filename);
-    _storage[id][image_name] = tmp;
+    _storage[id].mat[image_name] = tmp;
 }
 
 Mat& NymphManager::getMat(int id, const string image_name)
 {
-    return _storage[id][image_name];
+    return _storage[id].mat[image_name];
 }
 
 QPixmap NymphManager::getPixmap(int id, const string image_name)
 {
-    return Nymph::cvMatToQPixmap(_storage[id][image_name]);
+    return Nymph::cvMatToQPixmap(_storage[id].mat[image_name]);
 }
 
 void NymphManager::aliasMat(int id, const string new_name, const string old_name)
 {
-    _storage[id][new_name] = _storage[id][old_name];
+    _storage[id].mat[new_name] = _storage[id].mat[old_name];
 }
 
 void NymphManager::copyMat(int id, const string new_name, const string old_name)
 {
-    _storage[id][old_name].copyTo(_storage[id][new_name]);
+    _storage[id].mat[old_name].copyTo(_storage[id].mat[new_name]);
 }
 
 NymphMatSize NymphManager::getSize(int id, const string name)
 {
     NymphMatSize sz;
-    Mat& m = _storage[id][name];
+    Mat& m = _storage[id].mat[name];
     sz.rows = m.rows;
     sz.cols = m.cols;
     return sz;
@@ -83,15 +83,53 @@ NymphMatSize NymphManager::getSize(int id, const string name)
 
 NymphCore& NymphManager::getCore(int id)
 {
-    return _core[id];
+    return _storage[id].core;
+}
+
+NymphEnergyFunc NymphManager::getEnergy(int id)
+{
+    return _storage[id].energy;
+}
+
+int NymphManager::setEnergyFunc(int id, const std::string func_name)
+{
+    NymphEnergyFunc func = Nymph::Energy::get_energy_func(func_name);
+    if (func)
+    {
+        _storage[id].energy = func;
+        return 0;
+    }
+    else
+    {
+        return 1;   // Function Not Found.
+    }
+}
+
+NymphPatchEnergyFunc NymphManager::getPatchEnergy(int id)
+{
+    return _storage[id].patch_energy;
+}
+
+int NymphManager::setPatchEnergyFunc(int id, const std::string func_name)
+{
+    NymphPatchEnergyFunc func = Nymph::Energy::get_patch_energy_func(func_name);
+    if (func)
+    {
+        _storage[id].patch_energy = func;
+        return 0;
+    }
+    else
+    {
+        return 1;   // Function Not Found.
+    }
 }
 
 map<string, Mat> & NymphManager::operator[] (int id)
 {
-    return _storage[id];
+    return _storage[id].mat;
 }
 
 Mat & NymphManager::operator() (int id, const string name)
 {
-    return _storage[id][name];
+    return _storage[id].mat[name];
 }

@@ -26,18 +26,18 @@ void InitCor(Mat &cor, Size dst_size, int patch_radius)
     }
 }
 
-bool Propagation(const Mat &src, const Mat &dst, Mat &cor, int patch_radius, int row, int col)
+bool Propagation(NymphPatchEnergyFunc energy, const Mat &src, const Mat &dst, Mat &cor, int patch_radius, int row, int col)
 {
     bool flag = false;
     auto& cor_pt = cor.at<Vec2i>(row, col);
-    double old_energy = Nymph::Energy(src, dst, patch_radius, row, col, cor_pt[0], cor_pt[1]);
+    double old_energy = energy(src, dst, patch_radius, row, col, cor_pt[0], cor_pt[1]);
     // Propagation from left
     if (col > patch_radius)
     {
         auto& cor_left = cor.at<Vec2i>(row, col - 1);
         if (cor_left[1] + 1 < dst.cols - patch_radius)
         {
-            double from_left_energy = Nymph::Energy(src, dst, patch_radius, row, col, cor_left[0], cor_left[1] + 1);
+            double from_left_energy = energy(src, dst, patch_radius, row, col, cor_left[0], cor_left[1] + 1);
             if (from_left_energy <= old_energy)
             {
                 cor_pt[0] = cor_left[0];
@@ -53,7 +53,7 @@ bool Propagation(const Mat &src, const Mat &dst, Mat &cor, int patch_radius, int
         auto& cor_top = cor.at<Vec2i>(row - 1, col);
         if (cor_top[0] + 1 < dst.rows - patch_radius)
         {
-            double from_top_energy = Nymph::Energy(src, dst, patch_radius, row, col, cor_top[0] + 1, cor_top[1]);
+            double from_top_energy = energy(src, dst, patch_radius, row, col, cor_top[0] + 1, cor_top[1]);
             if (from_top_energy <= old_energy)
             {
                 cor_pt[0] = cor_top[0] + 1;
@@ -66,11 +66,11 @@ bool Propagation(const Mat &src, const Mat &dst, Mat &cor, int patch_radius, int
     return flag;
 }
 
-bool RandomSearch(const Mat &src, const Mat &dst, Mat &cor, int patch_radius, int row, int col, int radius, double alpha)
+bool RandomSearch(NymphPatchEnergyFunc energy, const Mat &src, const Mat &dst, Mat &cor, int patch_radius, int row, int col, int radius, double alpha)
 {
     bool flag = false;
     auto& cor_pt = cor.at<Vec2i>(row, col);
-    double old_energy = Nymph::Energy(src, dst, patch_radius, row, col, cor_pt[0], cor_pt[1]);
+    double old_energy = energy(src, dst, patch_radius, row, col, cor_pt[0], cor_pt[1]);
 
     double current_alpha = 1.0;
     int current_radius = radius;
@@ -96,7 +96,7 @@ bool RandomSearch(const Mat &src, const Mat &dst, Mat &cor, int patch_radius, in
         new_col = rng.uniform(hor_min, hor_max);
 
         // Check if it is better
-        double new_energy = Nymph::Energy(src, dst, patch_radius, row, col, new_row, new_col);
+        double new_energy = energy(src, dst, patch_radius, row, col, new_row, new_col);
         if (new_energy < old_energy)    // Here is <, not <=
         {
             cor_pt[0] = new_row;

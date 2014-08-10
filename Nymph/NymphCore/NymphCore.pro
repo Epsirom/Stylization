@@ -21,14 +21,16 @@ SOURCES += nymphcore.cpp \
     nymphcvbase.cpp \
     nymphmanager.cpp \
     nymphalgorithm.cpp \
-    nymphpatchmatch.cpp
+    nymphpatchmatch.cpp \
+    nymphenergy.cpp
 
 HEADERS += nymphcore.h\
         nymphcore_global.h \
     nymphcvbase.h \
     nymphmanager.h \
     nymphalgorithm.h \
-    nymphpatchmatch.h
+    nymphpatchmatch.h \
+    nymphenergy.h
 
 unix {
     target.path = /usr/lib

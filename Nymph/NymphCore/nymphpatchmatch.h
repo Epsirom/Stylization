@@ -1,14 +1,15 @@
 #ifndef NYMPHPATCHMATCH_H
 #define NYMPHPATCHMATCH_H
 
+#include "nymphalgorithm.h"
 #include <opencv2/opencv.hpp>
 
 namespace Nymph
 {
     namespace PatchMatch {
         void InitCor(cv::Mat& cor, cv::Size dst_size, int patch_radius);
-        bool Propagation(const cv::Mat& src, const cv::Mat& dst, cv::Mat& cor, int patch_radius, int row, int col);
-        bool RandomSearch(const cv::Mat& src, const cv::Mat& dst, cv::Mat& cor, int patch_radius, int row, int col, int radius, double alpha);
+        bool Propagation(NymphPatchEnergyFunc energy, const cv::Mat& src, const cv::Mat& dst, cv::Mat& cor, int patch_radius, int row, int col);
+        bool RandomSearch(NymphPatchEnergyFunc energy, const cv::Mat& src, const cv::Mat& dst, cv::Mat& cor, int patch_radius, int row, int col, int radius, double alpha);
     }
 
     namespace Test {

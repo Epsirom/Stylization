@@ -34,10 +34,10 @@ void nymph_imwrite(std::string file_name, const Mat &mat)
     imwrite(file_name, mat);
 }
 
-void PatchANN(const Mat &src, const Mat &dst, int patch_radius, Mat &cor)
+void PatchANN(NymphPatchEnergyFunc energy, const Mat &src, const Mat &dst, int patch_radius, Mat &cor)
 {
     // Here implement an Approximate Nearest Neighbor algorithm of PatchMatch
-    qDebug() << "PatchANN";
+    qDebug() << "PatchANN Start...";
     cor.create(src.rows, src.cols, CV_32SC2);
     PatchMatch::InitCor(cor, dst.size(), patch_radius);
     //Test::DrawCor(dst, cor, patch_radius); return;
@@ -50,17 +50,18 @@ void PatchANN(const Mat &src, const Mat &dst, int patch_radius, Mat &cor)
     for (int it = 0; it < 5; ++it)
     {
         // An iteration of PatchMatch ANN.
+        qDebug() << "Iteration" << it;
         for (int i = patch_radius; i < src.rows - patch_radius; ++i)
         {
             //qDebug() << "Iteration" << it << ", processing row" << i;
             for (int j = patch_radius; j < src.cols - patch_radius; ++j)
             {
                 //qDebug() << "Processing {" << i << "," << j << "}";
-                PatchMatch::Propagation(src, dst, cor, patch_radius, i, j);
+                PatchMatch::Propagation(energy, src, dst, cor, patch_radius, i, j);
                 //auto& cor_pt = cor.at<Vec2i>(i, j);
                 //if (cor_pt[0] >= dst.rows - patch_radius || cor_pt[1] >= dst.cols - patch_radius)
                 //    qDebug() << "Propagation error" << i << j;
-                PatchMatch::RandomSearch(src, dst, cor, patch_radius, i, j, random_search_radius, 0.5);
+                PatchMatch::RandomSearch(energy, src, dst, cor, patch_radius, i, j, random_search_radius, 0.5);
                 //auto& cor_pt2 = cor.at<Vec2i>(i, j);
                 //if (cor_pt2[0] >= dst.rows - patch_radius || cor_pt2[1] >= dst.cols - patch_radius)
                 //    qDebug() << "RandomSearch error" << i << j;
@@ -70,10 +71,24 @@ void PatchANN(const Mat &src, const Mat &dst, int patch_radius, Mat &cor)
         //Test::DrawCorResult(dst, cor, patch_radius, 0, 0);
     }
 
-    //qDebug() << "PatchMatch Finished.";
+    qDebug() << "PatchANN Finished.";
 
 }
 
+
+double EnergyWrapper(NymphEnergyFunc func, const Mat &src, const Mat &dst, int patch_radius, Mat &cor, std::vector<NymphPoint> &centers)
+{
+    NymphOffset offset;
+    NymphPoint pt = centers[0];
+    //qDebug() << "centers[0] {" << pt.row << "," << pt.col << "}";
+    auto corpt = cor.at<Vec2i>(pt.row, pt.col);
+    offset.row = corpt[0] - pt.row;
+    offset.col = corpt[1] - pt.col;
+    //qDebug() << "Offset {" << offset.row << "," << offset.col << "}";
+    return func(src, dst, patch_radius, offset, centers);
+}
+
+/*
 double Energy(const Mat &src, const Mat &dst, int patch_radius, Mat &cor, std::vector<NymphPoint> &centers)
 {
     NymphOffset offset;
@@ -117,7 +132,7 @@ double Energy(const Mat &src, const Mat &dst, int patch_radius, int center_src_r
         result += fabs(src_pt[k] - dst_pt[k]);
     }
     */
-
+/*
     for (int i = -patch_radius; i <= patch_radius; ++i)
     {
         for (int j = -patch_radius; j <= patch_radius; ++j)
@@ -133,6 +148,7 @@ double Energy(const Mat &src, const Mat &dst, int patch_radius, int center_src_r
 
     return result;
 }
+*/
 
 
 namespace Test {
@@ -141,13 +157,35 @@ namespace Test {
 void MarkPatch(const Mat &src, Mat &dst, int patch_radius, std::vector<NymphPoint> &centers)
 {
     src.copyTo(dst);
+    Mat flags(src.rows, src.cols, CV_8UC1, Scalar::all(0));
     for (auto& pt : centers)
     {
-        rectangle(dst,
-                  Point(pt.col - patch_radius, pt.row - patch_radius),
-                  Point(pt.col + patch_radius, pt.row + patch_radius),
-                  Scalar(0, 0, 255)
-                  );
+        flags.at<uchar>(pt.row, pt.col) = 1;
+    }
+    int patch_size = patch_radius * 2 + 1;
+    int dirmap[4][2] = {
+        {1, 0}, {-1, 0}, {0, 1}, {0, -1}
+    };
+    int linemap[3][2] = {   // {from, to}
+        {-1, -1}, {-1, 1}, {1, 1}
+    };
+    for (auto& pt : centers)
+    {
+        for (int i = 0; i < 4; ++i)
+        {
+            if (flags.at<uchar>(pt.row + dirmap[i][0] * patch_size, pt.col + dirmap[i][1] * patch_size) == 0)
+            {
+                Point fromPoint(
+                            pt.col + linemap[dirmap[i][1] + 1][0] * patch_radius,
+                            pt.row + linemap[dirmap[i][0] + 1][0] * patch_radius
+                        );
+                Point toPoint(
+                            pt.col + linemap[dirmap[i][1] + 1][1] * patch_radius,
+                            pt.row + linemap[dirmap[i][0] + 1][1] * patch_radius
+                        );
+                line(dst, fromPoint, toPoint, Scalar(0, 0, 255), 2);
+            }
+        }
     }
 }
 
@@ -165,13 +203,37 @@ void MarkCorPatch(const Mat &src, Mat &dst, int patch_radius, const Mat &cor, st
 void MarkCorPatch(const Mat &src, Mat &dst, int patch_radius, NymphOffset off, std::vector<NymphPoint> &centers)
 {
     src.copyTo(dst);
+    Mat flags(src.rows, src.cols, CV_8UC1, Scalar::all(0));
     for (auto& pt : centers)
     {
-        rectangle(dst,
-                  Point(pt.col - patch_radius + off.col, pt.row - patch_radius + off.row),
-                  Point(pt.col + patch_radius + off.col, pt.row + patch_radius + off.row),
-                  Scalar(0, 0, 255)
-                  );
+        pt.row += off.row;
+        pt.col += off.col;
+        flags.at<uchar>(pt.row, pt.col) = 1;
+    }
+    int patch_size = patch_radius * 2 + 1;
+    int dirmap[4][2] = {
+        {1, 0}, {-1, 0}, {0, 1}, {0, -1}
+    };
+    int linemap[3][2] = {   // {from, to}
+        {-1, -1}, {-1, 1}, {1, 1}
+    };
+    for (auto& pt : centers)
+    {
+        for (int i = 0; i < 4; ++i)
+        {
+            if (flags.at<uchar>(pt.row + dirmap[i][0] * patch_size, pt.col + dirmap[i][1] * patch_size) == 0)
+            {
+                Point fromPoint(
+                            pt.col + linemap[dirmap[i][1] + 1][0] * patch_radius,
+                            pt.row + linemap[dirmap[i][0] + 1][0] * patch_radius
+                        );
+                Point toPoint(
+                            pt.col + linemap[dirmap[i][1] + 1][1] * patch_radius,
+                            pt.row + linemap[dirmap[i][0] + 1][1] * patch_radius
+                        );
+                line(dst, fromPoint, toPoint, Scalar(0, 0, 255), 2);
+            }
+        }
     }
 }
 
