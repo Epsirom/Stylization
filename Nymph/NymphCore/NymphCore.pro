@@ -4,6 +4,8 @@
 #
 #-------------------------------------------------
 
+VERSION = 0.0.2
+
 CONFIG += use_opencv
 
 include(../paths.pri)

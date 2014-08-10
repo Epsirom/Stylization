@@ -367,7 +367,12 @@ void MainWindow::on_action_show_result_triggered()
 
 void MainWindow::on_action_about_me_triggered()
 {
-    QMessageBox::about(this, tr("About"), tr("Nymph v0.0.1 alpha\nBy Huarong Chen http://chr.asia\nCopy rights reserved.\n2014.08"));
+    QMessageBox::about(this,
+                       tr("About"),
+                       tr("%1 - %2 v%3\nBy Huarong Chen http://chr.asia\nCopy rights reserved.\n2014.08")
+                       .arg(qApp->applicationDisplayName())
+                       .arg(qApp->applicationName())
+                       .arg(qApp->applicationVersion()));
 }
 
 void MainWindow::on_action_about_qt_triggered()

@@ -29,6 +29,10 @@ void nymph_lua_showresult(int id)
 
 int main(int argc, char *argv[])
 {
+    qApp->setApplicationName("Nymph");
+    qApp->setApplicationDisplayName("NymphGUI");
+    qApp->setApplicationVersion("0.0.2 alpha");
+
     install_new_print(nymph_lua_print);
     install_new_syncview(nymph_lua_syncview);
     install_new_showresult(nymph_lua_showresult);

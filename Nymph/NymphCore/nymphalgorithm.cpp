@@ -52,7 +52,7 @@ void PatchANN(const Mat &src, const Mat &dst, int patch_radius, Mat &cor)
         // An iteration of PatchMatch ANN.
         for (int i = patch_radius; i < src.rows - patch_radius; ++i)
         {
-            qDebug() << "Iteration" << it << ", processing row" << i;
+            //qDebug() << "Iteration" << it << ", processing row" << i;
             for (int j = patch_radius; j < src.cols - patch_radius; ++j)
             {
                 //qDebug() << "Processing {" << i << "," << j << "}";
