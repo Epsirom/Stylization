@@ -64,9 +64,11 @@ LUA_EXT_FUNC(imshow);
 LUA_EXT_FUNC(saveimage);
 LUA_EXT_FUNC(set_energy);
 LUA_EXT_FUNC(set_patch_energy);
-LUA_EXT_FUNC(show_pm_prob);     // show patch match probablity map
-LUA_EXT_FUNC(show_pm_result);   // show patch match result
-LUA_EXT_FUNC(corpoint);
+LUA_EXT_FUNC(draw_pm_prob);     // draw patch match probability map
+LUA_EXT_FUNC(draw_pm_result);   // draw patch match result
+LUA_EXT_FUNC(get_offset);
+LUA_EXT_FUNC(mat_2i);
+LUA_EXT_FUNC(mat_3b);
 
 void imhide(std::string window_name = std::string());
 
@@ -87,9 +89,11 @@ void imhide(std::string window_name = std::string());
     LUA_EXT_PUSH_FUNC(saveimage); \
     LUA_EXT_PUSH_FUNC(set_energy); \
     LUA_EXT_PUSH_FUNC(set_patch_energy); \
-    LUA_EXT_PUSH_FUNC(show_pm_prob); \
-    LUA_EXT_PUSH_FUNC(show_pm_result); \
-    LUA_EXT_PUSH_FUNC(corpoint); \
+    LUA_EXT_PUSH_FUNC(draw_pm_prob); \
+    LUA_EXT_PUSH_FUNC(draw_pm_result); \
+    LUA_EXT_PUSH_FUNC(get_offset); \
+    LUA_EXT_PUSH_FUNC(mat_2i); \
+    LUA_EXT_PUSH_FUNC(mat_3b);
 
 
 

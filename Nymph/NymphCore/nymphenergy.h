@@ -3,8 +3,8 @@
 
 #include "nymphalgorithm.h"
 
-#define NYMPH_ENERGY_FUNC_TPL(name) double name(const cv::Mat& src, const cv::Mat& dst, int patch_radius, NymphOffset off, std::vector<NymphPoint> &centers)
-#define NYMPH_PATCH_ENERGY_FUNC_TPL(name) double name(const cv::Mat& src, const cv::Mat& dst, int patch_radius, int center_src_row, int center_src_col, int center_dst_row, int center_dst_col)
+#define NYMPH_ENERGY_FUNC_TPL(name) double name(std::vector<int>& param, const cv::Mat& src, const cv::Mat& dst, int patch_radius, NymphOffset off, std::vector<NymphPoint> &centers)
+#define NYMPH_PATCH_ENERGY_FUNC_TPL(name) double name(std::vector<int>& param, const cv::Mat& src, const cv::Mat& dst, int patch_radius, int center_src_row, int center_src_col, int center_dst_row, int center_dst_col)
 
 namespace Nymph
 {
@@ -13,8 +13,8 @@ namespace Nymph
         NymphEnergyFunc get_energy_func(const std::string& func_name);
         NymphPatchEnergyFunc get_patch_energy_func(const std::string& func_name);
 
-        NYMPH_ENERGY_FUNC_TPL(rgb_naive);
-        NYMPH_PATCH_ENERGY_FUNC_TPL(rgb_naive_patch);
+        //NYMPH_ENERGY_FUNC_TPL(rgb_naive);
+        //NYMPH_PATCH_ENERGY_FUNC_TPL(rgb_naive_patch);
 
         NYMPH_ENERGY_FUNC_TPL(rgb_factor);
         NYMPH_PATCH_ENERGY_FUNC_TPL(rgb_factor_patch);

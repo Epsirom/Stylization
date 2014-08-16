@@ -9,24 +9,50 @@ namespace cv {
     class Mat;
 }
 
+
 typedef struct NymphPoint {
     int row, col;
 } NymphPoint;
 
+typedef struct Nymph3B {
+    unsigned char c1;
+    unsigned char c2;
+    unsigned char c3;
+} Nymph3B;
+
 typedef NymphPoint NymphCor;
 typedef NymphPoint NymphOffset;
-typedef double (*NymphEnergyFunc) (const cv::Mat& , const cv::Mat& , int , NymphOffset , std::vector<NymphPoint> &);
-typedef double (*NymphPatchEnergyFunc) (const cv::Mat& , const cv::Mat& , int , int , int , int , int );
+typedef NymphPoint Nymph2I;
+typedef double (*NymphEnergyFunc) (std::vector<int>& param, const cv::Mat& , const cv::Mat& , int , NymphOffset , std::vector<NymphPoint> &);
+typedef double (*NymphPatchEnergyFunc) (std::vector<int>& param, const cv::Mat& , const cv::Mat& , int , int , int , int , int );
+
+namespace Nymph {
+namespace Energy {
+double rgb_naive (std::vector<int>& param, const cv::Mat& , const cv::Mat& , int , NymphOffset , std::vector<NymphPoint> &);
+double rgb_naive_patch (std::vector<int>& param, const cv::Mat& , const cv::Mat& , int , int , int , int , int);
+}
+}
+
+typedef struct NymphEnergyPack {
+    NymphEnergyFunc func = Nymph::Energy::rgb_naive;
+    std::vector<int> param;
+} NymphEnergyPack;
+
+typedef struct NymphPatchEnergyPack {
+    NymphPatchEnergyFunc func = Nymph::Energy::rgb_naive_patch;
+    std::vector<int> param;
+} NymphPatchEnergyPack;
 
 namespace Nymph {
     void nymph_imshow(std::string window_name, const cv::Mat& mat);
     void nymph_imhide(std::string window_name = std::string());
     void nymph_imwrite(std::string file_name, const cv::Mat& mat);
-    NymphPoint nymph_corpoint(const cv::Mat& cor, int row, int col);
+    Nymph2I nymph_mat_at_2i(const cv::Mat& m, int row, int col);
+    Nymph3B nymph_mat_at_3b(const cv::Mat& m, int row, int col);
 
-    void PatchANN(NymphPatchEnergyFunc energy, const cv::Mat& src, const cv::Mat& dst, int patch_radius, cv::Mat& cor, int iterations = 5);
-    double EnergyWrapper(NymphEnergyFunc func, const cv::Mat& src, const cv::Mat& dst, int patch_radius, cv::Mat& cor, std::vector<NymphPoint>& centers);
-    double EnergyWrapper(NymphEnergyFunc func, const cv::Mat &src, const cv::Mat &dst, int patch_radius, NymphOffset off, std::vector<NymphPoint> &centers);
+    void PatchANN(NymphPatchEnergyPack& energy, const cv::Mat& src, const cv::Mat& dst, int patch_radius, cv::Mat& cor, int iterations = 5);
+    double EnergyWrapper(NymphEnergyPack& energy, const cv::Mat& src, const cv::Mat& dst, int patch_radius, cv::Mat& cor, std::vector<NymphPoint>& centers);
+    double EnergyWrapper(NymphEnergyPack& energy, const cv::Mat &src, const cv::Mat &dst, int patch_radius, NymphOffset off, std::vector<NymphPoint> &centers);
     //double Energy(const cv::Mat& src, const cv::Mat& dst, int patch_radius, cv::Mat& cor, std::vector<NymphPoint>& centers);
     //double Energy(const cv::Mat& src, const cv::Mat& dst, int patch_radius, NymphOffset off, std::vector<NymphPoint> &centers);
     //double Energy(const cv::Mat& src, const cv::Mat& dst, int patch_radius, int center_src_row, int center_src_col, int center_dst_row, int center_dst_col);

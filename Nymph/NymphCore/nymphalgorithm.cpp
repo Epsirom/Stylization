@@ -33,16 +33,26 @@ void nymph_imwrite(std::string file_name, const Mat &mat)
     imwrite(file_name, mat);
 }
 
-NymphPoint nymph_corpoint(const Mat &cor, int row, int col)
+Nymph2I nymph_mat_at_2i(const Mat &m, int row, int col)
 {
-    auto& pt = cor.at<Vec2i>(row, col);
-    NymphPoint npt;
+    auto& pt = m.at<Vec2i>(row, col);
+    Nymph2I npt;
     npt.row = pt[0];
     npt.col = pt[1];
     return npt;
 }
 
-void PatchANN(NymphPatchEnergyFunc energy, const Mat &src, const Mat &dst, int patch_radius, Mat &cor, int iterations)
+Nymph3B nymph_mat_at_3b(const Mat &m, int row, int col)
+{
+    auto& pt = m.at<Vec3b>(row, col);
+    Nymph3B npt;
+    npt.c1 = pt[0];
+    npt.c2 = pt[1];
+    npt.c3 = pt[2];
+    return npt;
+}
+
+void PatchANN(NymphPatchEnergyPack& energy, const Mat &src, const Mat &dst, int patch_radius, Mat &cor, int iterations)
 {
     // Here implement an Approximate Nearest Neighbor algorithm of PatchMatch
     qDebug() << "PatchANN Start...";
@@ -84,7 +94,7 @@ void PatchANN(NymphPatchEnergyFunc energy, const Mat &src, const Mat &dst, int p
 }
 
 
-double EnergyWrapper(NymphEnergyFunc func, const Mat &src, const Mat &dst, int patch_radius, Mat &cor, std::vector<NymphPoint> &centers)
+double EnergyWrapper(NymphEnergyPack& energy, const Mat &src, const Mat &dst, int patch_radius, Mat &cor, std::vector<NymphPoint> &centers)
 {
     NymphOffset offset;
     NymphPoint pt = centers[0];
@@ -93,12 +103,12 @@ double EnergyWrapper(NymphEnergyFunc func, const Mat &src, const Mat &dst, int p
     offset.row = corpt[0] - pt.row;
     offset.col = corpt[1] - pt.col;
     //qDebug() << "Offset {" << offset.row << "," << offset.col << "}";
-    return func(src, dst, patch_radius, offset, centers);
+    return energy.func(energy.param, src, dst, patch_radius, offset, centers);
 }
 
-double EnergyWrapper(NymphEnergyFunc func, const Mat &src, const Mat &dst, int patch_radius, NymphOffset off, std::vector<NymphPoint> &centers)
+double EnergyWrapper(NymphEnergyPack& energy, const Mat &src, const Mat &dst, int patch_radius, NymphOffset off, std::vector<NymphPoint> &centers)
 {
-    return func(src, dst, patch_radius, off, centers);
+    return energy.func(energy.param, src, dst, patch_radius, off, centers);
 }
 
 /*

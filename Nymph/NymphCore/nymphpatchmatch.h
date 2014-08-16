@@ -9,8 +9,8 @@ namespace Nymph
 {
     namespace PatchMatch {
         void InitCor(cv::Mat& cor, cv::Size dst_size, int patch_radius);
-        bool Propagation(NymphPatchEnergyFunc energy, const cv::Mat& src, const cv::Mat& dst, cv::Mat& cor, int patch_radius, int row, int col);
-        bool RandomSearch(NymphPatchEnergyFunc energy, const cv::Mat& src, const cv::Mat& dst, cv::Mat& cor, int patch_radius, int row, int col, int radius, double alpha);
+        bool Propagation(NymphPatchEnergyPack& energy, const cv::Mat& src, const cv::Mat& dst, cv::Mat& cor, int patch_radius, int row, int col);
+        bool RandomSearch(NymphPatchEnergyPack& energy, const cv::Mat& src, const cv::Mat& dst, cv::Mat& cor, int patch_radius, int row, int col, int radius, double alpha);
     }
 
     namespace Test {

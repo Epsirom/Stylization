@@ -289,14 +289,25 @@ LUA_EXT_FUNC(saveimage)
 
 LUA_EXT_FUNC(set_energy)
 {
-    LUA_EXT_GET_PARAM_START(1);
+    LUA_EXT_GET_PARAM_START(2);
     LUA_EXT_GET_STRING(func_name);
+
+    int len = lua_objlen(l, -1);
+    std::vector<int> params(len);
+    for (int i = 1; i <= len; ++i)
+    {
+        lua_pushinteger(l, i);
+        lua_gettable(l, -2);
+        params[i - 1] = lua_tointeger(l, -1);
+        lua_pop(l, 1);
+    }
+
     LUA_EXT_GET_PARAM_END;
 
     LUA_EXT_GET_NYMPH_ID(nymph_id);
 
     auto mgr = NymphManager::instance();
-    int result = mgr->setEnergyFunc(nymph_id, func_name);
+    int result = mgr->setEnergy(nymph_id, func_name, params);
 
     LUA_EXT_RETURN_START;
     LUA_EXT_RETURN_INT(result);
@@ -305,21 +316,32 @@ LUA_EXT_FUNC(set_energy)
 
 LUA_EXT_FUNC(set_patch_energy)
 {
-    LUA_EXT_GET_PARAM_START(1);
+    LUA_EXT_GET_PARAM_START(2);
     LUA_EXT_GET_STRING(func_name);
+
+    int len = lua_objlen(l, -1);
+    std::vector<int> params(len);
+    for (int i = 1; i <= len; ++i)
+    {
+        lua_pushinteger(l, i);
+        lua_gettable(l, -2);
+        params[i - 1] = lua_tointeger(l, -1);
+        lua_pop(l, 1);
+    }
+
     LUA_EXT_GET_PARAM_END;
 
     LUA_EXT_GET_NYMPH_ID(nymph_id);
 
     auto mgr = NymphManager::instance();
-    int result = mgr->setPatchEnergyFunc(nymph_id, func_name);
+    int result = mgr->setPatchEnergy(nymph_id, func_name, params);
 
     LUA_EXT_RETURN_START;
     LUA_EXT_RETURN_INT(result);
     LUA_EXT_RETURN_END;
 }
 
-LUA_EXT_FUNC(show_pm_prob)
+LUA_EXT_FUNC(draw_pm_prob)
 {
     LUA_EXT_GET_PARAM_START(4);
     LUA_EXT_GET_STRING(dst_name);
@@ -335,7 +357,7 @@ LUA_EXT_FUNC(show_pm_prob)
     return 0;
 }
 
-LUA_EXT_FUNC(show_pm_result)
+LUA_EXT_FUNC(draw_pm_result)
 {
     LUA_EXT_GET_PARAM_START(4);
     LUA_EXT_GET_STRING(dst_name);
@@ -351,21 +373,58 @@ LUA_EXT_FUNC(show_pm_result)
     return 0;
 }
 
-LUA_EXT_FUNC(corpoint)
+LUA_EXT_FUNC(get_offset)
 {
     LUA_EXT_GET_PARAM_START(3);
-    LUA_EXT_GET_STRING(cor_name);
+    LUA_EXT_GET_STRING(mat_name);
     LUA_EXT_GET_INT(row);
     LUA_EXT_GET_INT(col);
     LUA_EXT_GET_PARAM_END;
 
     LUA_EXT_GET_NYMPH_ID(nymph_id);
     auto& img = NymphManager::insobj();
-    NymphPoint npt = Nymph::nymph_corpoint(img(nymph_id, cor_name), row, col);
+    Nymph2I npt = Nymph::nymph_mat_at_2i(img(nymph_id, mat_name), row, col);
 
     LUA_EXT_RETURN_START;
     LUA_EXT_RETURN_INT(npt.row - row);
     LUA_EXT_RETURN_INT(npt.col - col);
+    LUA_EXT_RETURN_END;
+}
+
+LUA_EXT_FUNC(mat_2i)
+{
+    LUA_EXT_GET_PARAM_START(3);
+    LUA_EXT_GET_STRING(mat_name);
+    LUA_EXT_GET_INT(row);
+    LUA_EXT_GET_INT(col);
+    LUA_EXT_GET_PARAM_END;
+
+    LUA_EXT_GET_NYMPH_ID(nymph_id);
+    auto& img = NymphManager::insobj();
+    Nymph2I npt = Nymph::nymph_mat_at_2i(img(nymph_id, mat_name), row, col);
+
+    LUA_EXT_RETURN_START;
+    LUA_EXT_RETURN_INT(npt.row);
+    LUA_EXT_RETURN_INT(npt.col);
+    LUA_EXT_RETURN_END;
+}
+
+LUA_EXT_FUNC(mat_3b)
+{
+    LUA_EXT_GET_PARAM_START(3);
+    LUA_EXT_GET_STRING(mat_name);
+    LUA_EXT_GET_INT(row);
+    LUA_EXT_GET_INT(col);
+    LUA_EXT_GET_PARAM_END;
+
+    LUA_EXT_GET_NYMPH_ID(nymph_id);
+    auto& img = NymphManager::insobj();
+    Nymph3B npt = Nymph::nymph_mat_at_3b(img(nymph_id, mat_name), row, col);
+
+    LUA_EXT_RETURN_START;
+    LUA_EXT_RETURN_INT(npt.c1);
+    LUA_EXT_RETURN_INT(npt.c2);
+    LUA_EXT_RETURN_INT(npt.c3);
     LUA_EXT_RETURN_END;
 }
 

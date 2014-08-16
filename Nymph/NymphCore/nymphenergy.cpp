@@ -47,7 +47,7 @@ NYMPH_ENERGY_FUNC_TPL(rgb_naive)
     int patch_size = patch_radius * 2 + 1;
     for (auto& pt : centers)
     {
-        result += rgb_naive_patch(src, dst, patch_radius, pt.row, pt.col, pt.row + off.row, pt.col + off.col);
+        result += rgb_naive_patch(param, src, dst, patch_radius, pt.row, pt.col, pt.row + off.row, pt.col + off.col);
     }
     return result - centers.size() * 100 * patch_size * patch_size;
 }
@@ -95,7 +95,7 @@ NYMPH_ENERGY_FUNC_TPL(rgb_factor)
     int patch_size = patch_radius * 2 + 1;
     for (auto& pt : centers)
     {
-        result += rgb_factor_patch(src, dst, patch_radius, pt.row, pt.col, pt.row + off.row, pt.col + off.col);
+        result += rgb_factor_patch(param, src, dst, patch_radius, pt.row, pt.col, pt.row + off.row, pt.col + off.col);
     }
     return result - centers.size() * 50 * patch_size * patch_size;
 }
@@ -136,7 +136,7 @@ NYMPH_ENERGY_FUNC_TPL(luminance_naive)
     int patch_size = patch_radius * 2 + 1;
     for (auto& pt : centers)
     {
-        result += luminance_naive_patch(src, dst, patch_radius, pt.row, pt.col, pt.row + off.row, pt.col + off.col);
+        result += luminance_naive_patch(param, src, dst, patch_radius, pt.row, pt.col, pt.row + off.row, pt.col + off.col);
     }
     return result - centers.size() * 25 * patch_size * patch_size;
 }

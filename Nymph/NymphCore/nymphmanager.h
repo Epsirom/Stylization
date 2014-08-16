@@ -5,6 +5,7 @@
 #include "nymphenergy.h"
 
 #include <map>
+#include <vector>
 #include <string>
 
 class QPixmap;
@@ -17,8 +18,8 @@ typedef struct NymphMatSize {
 typedef struct NymphStoragePack {
     std::map<std::string, cv::Mat> mat;
     NymphCore core;
-    NymphEnergyFunc energy = Nymph::Energy::rgb_naive;
-    NymphPatchEnergyFunc patch_energy = Nymph::Energy::rgb_naive_patch;
+    NymphEnergyPack energy;
+    NymphPatchEnergyPack patch_energy;
 } NymphStoragePack;
 
 class NymphManager
@@ -40,10 +41,10 @@ public:
     NymphMatSize getSize(int id, const std::string name);
 
     NymphCore& getCore(int id);
-    NymphEnergyFunc getEnergy(int id);
-    int setEnergyFunc(int id, const std::string func_name);
-    NymphPatchEnergyFunc getPatchEnergy(int id);
-    int setPatchEnergyFunc(int id, const std::string func_name);
+    NymphEnergyPack& getEnergy(int id);
+    int setEnergy(int id, const std::string func_name, std::vector<int>& func_param);
+    NymphPatchEnergyPack& getPatchEnergy(int id);
+    int setPatchEnergy(int id, const std::string func_name, std::vector<int>& func_param);
 
     std::map<std::string, cv::Mat> & operator[] (int id);
     cv::Mat & operator() (int id, const std::string name);
