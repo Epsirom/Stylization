@@ -15,14 +15,8 @@ require('algorithm.utils')
 
 debug('Package: '..NYMPH_INPUT_PACKAGE)
 
-set_rgb()
+set_rgb({100, 1, 1, 1})
 debug('Energy: rgb_naive')
-
---set_luminance()
---debug('Energy: luminance')
-
---set_rgb_factor()
---debug('Energy: rgb_factor')
 
 function calc_size(obj)
 	obj.rows, obj.cols = imgsize(obj.img)
@@ -196,7 +190,7 @@ function NymphIteration()
 			growings = {},
 			offset = {}
 		}
-		nymph.seeds[i].offset[1], nymph.seeds[i].offset[2] = corpoint(cor, nymph.seeds[i].centers[1][1], nymph.seeds[i].centers[1][2])
+		nymph.seeds[i].offset[1], nymph.seeds[i].offset[2] = get_offset(cor, nymph.seeds[i].centers[1][1], nymph.seeds[i].centers[1][2])
 		GrowAround(nymph.seeds[i], nymph.seeds[i].centers[1])
 	end
 	--debug('Select seeds done.')

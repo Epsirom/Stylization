@@ -91,7 +91,7 @@ NymphEnergyPack& NymphManager::getEnergy(int id)
     return _storage[id].energy;
 }
 
-int NymphManager::setEnergy(int id, const std::string func_name, std::vector<int>& func_param)
+int NymphManager::setEnergy(int id, const std::string func_name, NymphEnergyParam& func_param)
 {
     NymphEnergyFunc func = Nymph::Energy::get_energy_func(func_name);
     if (func)
@@ -112,7 +112,7 @@ NymphPatchEnergyPack& NymphManager::getPatchEnergy(int id)
     return _storage[id].patch_energy;
 }
 
-int NymphManager::setPatchEnergy(int id, const std::string func_name, std::vector<int>& func_param)
+int NymphManager::setPatchEnergy(int id, const std::string func_name, NymphEnergyParam& func_param)
 {
     NymphPatchEnergyFunc func = Nymph::Energy::get_patch_energy_func(func_name);
     if (func)

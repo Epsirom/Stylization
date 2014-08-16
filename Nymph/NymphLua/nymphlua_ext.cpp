@@ -293,12 +293,12 @@ LUA_EXT_FUNC(set_energy)
     LUA_EXT_GET_STRING(func_name);
 
     int len = lua_objlen(l, -1);
-    std::vector<int> params(len);
+    NymphEnergyParam params(len);
     for (int i = 1; i <= len; ++i)
     {
         lua_pushinteger(l, i);
         lua_gettable(l, -2);
-        params[i - 1] = lua_tointeger(l, -1);
+        params[i - 1] = lua_tonumber(l, -1);
         lua_pop(l, 1);
     }
 
@@ -320,12 +320,12 @@ LUA_EXT_FUNC(set_patch_energy)
     LUA_EXT_GET_STRING(func_name);
 
     int len = lua_objlen(l, -1);
-    std::vector<int> params(len);
+    NymphEnergyParam params(len);
     for (int i = 1; i <= len; ++i)
     {
         lua_pushinteger(l, i);
         lua_gettable(l, -2);
-        params[i - 1] = lua_tointeger(l, -1);
+        params[i - 1] = lua_tonumber(l, -1);
         lua_pop(l, 1);
     }
 

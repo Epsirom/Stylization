@@ -5,6 +5,17 @@
 
 using namespace cv;
 
+#define CHECK_PATCH_IN_RANGE \
+    if (center_src_row < patch_radius || center_src_row >= src.rows - patch_radius \
+            || center_src_col < patch_radius || center_src_col >= src.cols - patch_radius \
+            || center_dst_row < patch_radius || center_dst_row >= dst.rows - patch_radius \
+            || center_dst_col < patch_radius || center_dst_col >= dst.cols - patch_radius \
+            ) \
+    { \
+        return 1.0/0; \
+    }
+
+
 namespace Nymph
 {
 namespace Energy
@@ -41,27 +52,21 @@ NymphPatchEnergyFunc get_patch_energy_func(const std::string &func_name)
     return 0;
 }
 
-NYMPH_ENERGY_FUNC_TPL(rgb_naive)
+NYMPH_ENERGY_FUNC_TPL(rgb)
 {
     double result = 0;
     int patch_size = patch_radius * 2 + 1;
+    NymphEnergyParam patch_param(&param[1], &param[4]);
     for (auto& pt : centers)
     {
-        result += rgb_naive_patch(param, src, dst, patch_radius, pt.row, pt.col, pt.row + off.row, pt.col + off.col);
+        result += rgb_patch(patch_param, src, dst, patch_radius, pt.row, pt.col, pt.row + off.row, pt.col + off.col);
     }
-    return result - centers.size() * 100 * patch_size * patch_size;
+    return result - centers.size() * param[0] * patch_size * patch_size;
 }
 
-NYMPH_PATCH_ENERGY_FUNC_TPL(rgb_naive_patch)
+NYMPH_PATCH_ENERGY_FUNC_TPL(rgb_patch)
 {
-    if (center_src_row < patch_radius || center_src_row >= src.rows - patch_radius
-            || center_src_col < patch_radius || center_src_col >= src.cols - patch_radius
-            || center_dst_row < patch_radius || center_dst_row >= dst.rows - patch_radius
-            || center_dst_col < patch_radius || center_dst_col >= dst.cols - patch_radius
-            )
-    {
-        return 1.0/0;
-    }
+    CHECK_PATCH_IN_RANGE;
 
     double result = 0;
     /*
@@ -81,7 +86,7 @@ NYMPH_PATCH_ENERGY_FUNC_TPL(rgb_naive_patch)
             auto& dst_pt = dst.at<Vec3b>(center_dst_row + i, center_dst_col + j);
             for (int k = 0; k < 3; ++k)
             {
-                result += fabs(src_pt[k] - dst_pt[k]);
+                result += fabs(src_pt[k] - dst_pt[k]) * param[k];
             }
         }
     }
@@ -102,14 +107,7 @@ NYMPH_ENERGY_FUNC_TPL(rgb_factor)
 
 NYMPH_PATCH_ENERGY_FUNC_TPL(rgb_factor_patch)
 {
-    if (center_src_row < patch_radius || center_src_row >= src.rows - patch_radius
-            || center_src_col < patch_radius || center_src_col >= src.cols - patch_radius
-            || center_dst_row < patch_radius || center_dst_row >= dst.rows - patch_radius
-            || center_dst_col < patch_radius || center_dst_col >= dst.cols - patch_radius
-            )
-    {
-        return 1.0/0;
-    }
+    CHECK_PATCH_IN_RANGE;
 
     double result = 0;
     double factor[3] = {0.5, 0.25, 0.25};
@@ -144,14 +142,7 @@ NYMPH_ENERGY_FUNC_TPL(luminance_naive)
 // Using Y = 0.375 R + 0.5 G + 0.125 B, that is Y = (R+R+R+B+G+G+G+G)>>3
 NYMPH_PATCH_ENERGY_FUNC_TPL(luminance_naive_patch)
 {
-    if (center_src_row < patch_radius || center_src_row >= src.rows - patch_radius
-            || center_src_col < patch_radius || center_src_col >= src.cols - patch_radius
-            || center_dst_row < patch_radius || center_dst_row >= dst.rows - patch_radius
-            || center_dst_col < patch_radius || center_dst_col >= dst.cols - patch_radius
-            )
-    {
-        return 1.0/0;
-    }
+    CHECK_PATCH_IN_RANGE;
 
     double result = 0;
     for (int i = -patch_radius; i <= patch_radius; ++i)

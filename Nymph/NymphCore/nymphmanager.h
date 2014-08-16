@@ -42,9 +42,9 @@ public:
 
     NymphCore& getCore(int id);
     NymphEnergyPack& getEnergy(int id);
-    int setEnergy(int id, const std::string func_name, std::vector<int>& func_param);
+    int setEnergy(int id, const std::string func_name, NymphEnergyParam& func_param);
     NymphPatchEnergyPack& getPatchEnergy(int id);
-    int setPatchEnergy(int id, const std::string func_name, std::vector<int>& func_param);
+    int setPatchEnergy(int id, const std::string func_name, NymphEnergyParam& func_param);
 
     std::map<std::string, cv::Mat> & operator[] (int id);
     cv::Mat & operator() (int id, const std::string name);

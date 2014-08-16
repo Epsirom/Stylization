@@ -23,24 +23,27 @@ typedef struct Nymph3B {
 typedef NymphPoint NymphCor;
 typedef NymphPoint NymphOffset;
 typedef NymphPoint Nymph2I;
-typedef double (*NymphEnergyFunc) (std::vector<int>& param, const cv::Mat& , const cv::Mat& , int , NymphOffset , std::vector<NymphPoint> &);
-typedef double (*NymphPatchEnergyFunc) (std::vector<int>& param, const cv::Mat& , const cv::Mat& , int , int , int , int , int );
+
+typedef std::vector<double> NymphEnergyParam;
+typedef double (*NymphEnergyFunc) (NymphEnergyParam& param, const cv::Mat& , const cv::Mat& , int , NymphOffset , std::vector<NymphPoint> &);
+typedef double (*NymphPatchEnergyFunc) (NymphEnergyParam& param, const cv::Mat& , const cv::Mat& , int , int , int , int , int );
+
 
 namespace Nymph {
 namespace Energy {
-double rgb_naive (std::vector<int>& param, const cv::Mat& , const cv::Mat& , int , NymphOffset , std::vector<NymphPoint> &);
-double rgb_naive_patch (std::vector<int>& param, const cv::Mat& , const cv::Mat& , int , int , int , int , int);
+double rgb (NymphEnergyParam& param, const cv::Mat& , const cv::Mat& , int , NymphOffset , std::vector<NymphPoint> &);
+double rgb_patch (NymphEnergyParam& param, const cv::Mat& , const cv::Mat& , int , int , int , int , int);
 }
 }
 
 typedef struct NymphEnergyPack {
-    NymphEnergyFunc func = Nymph::Energy::rgb_naive;
-    std::vector<int> param;
+    NymphEnergyFunc func = Nymph::Energy::rgb;
+    NymphEnergyParam param;
 } NymphEnergyPack;
 
 typedef struct NymphPatchEnergyPack {
-    NymphPatchEnergyFunc func = Nymph::Energy::rgb_naive_patch;
-    std::vector<int> param;
+    NymphPatchEnergyFunc func = Nymph::Energy::rgb_patch;
+    NymphEnergyParam param;
 } NymphPatchEnergyPack;
 
 namespace Nymph {
