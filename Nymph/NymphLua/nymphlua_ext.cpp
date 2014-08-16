@@ -111,28 +111,30 @@ LUA_EXT_FUNC(imgsize)
 
 LUA_EXT_FUNC(patchANN)
 {
-    LUA_EXT_GET_PARAM_START(4);
+    LUA_EXT_GET_PARAM_START(5);
     LUA_EXT_GET_STRING(src_img);
     LUA_EXT_GET_STRING(dst_img);
     LUA_EXT_GET_INT(patch_radius);
     LUA_EXT_GET_STRING(cor_img);
+    LUA_EXT_GET_INT(iterations);
     LUA_EXT_GET_PARAM_END;
 
     LUA_EXT_GET_NYMPH_ID(nymph_id);
 
     NymphManager& img = NymphManager::insobj();
-    Nymph::PatchANN(img.getPatchEnergy(nymph_id), img(nymph_id, src_img), img(nymph_id, dst_img), patch_radius, img(nymph_id, cor_img));
+    Nymph::PatchANN(img.getPatchEnergy(nymph_id), img(nymph_id, src_img), img(nymph_id, dst_img), patch_radius, img(nymph_id, cor_img), iterations);
 
     return 0;
 }
 
 LUA_EXT_FUNC(energy)
 {
-    LUA_EXT_GET_PARAM_START(5);
+    LUA_EXT_GET_PARAM_START(6);
     LUA_EXT_GET_STRING(src_img);
     LUA_EXT_GET_STRING(dst_img);
     LUA_EXT_GET_INT(patch_radius);
-    LUA_EXT_GET_STRING(cor_img);
+    LUA_EXT_GET_INT(off_row);
+    LUA_EXT_GET_INT(off_col);
 
     int len = lua_objlen(l, -1);
     std::vector<NymphPoint> centers(len);
@@ -161,7 +163,10 @@ LUA_EXT_FUNC(energy)
     LUA_EXT_GET_NYMPH_ID(nymph_id);
 
     NymphManager& img = NymphManager::insobj();
-    double energy = Nymph::EnergyWrapper(img.getEnergy(nymph_id), img(nymph_id, src_img), img(nymph_id, dst_img), patch_radius, img(nymph_id, cor_img), centers);
+    NymphOffset off;
+    off.row = off_row;
+    off.col = off_col;
+    double energy = Nymph::EnergyWrapper(img.getEnergy(nymph_id), img(nymph_id, src_img), img(nymph_id, dst_img), patch_radius, off, centers);
 
     LUA_EXT_RETURN_START;
     LUA_EXT_RETURN_DOUBLE(energy);
@@ -209,11 +214,12 @@ LUA_EXT_FUNC(markpatch)
 
 LUA_EXT_FUNC(markcorpatch)
 {
-    LUA_EXT_GET_PARAM_START(5);
+    LUA_EXT_GET_PARAM_START(6);
     LUA_EXT_GET_STRING(src_img);
     LUA_EXT_GET_STRING(dst_img);
     LUA_EXT_GET_INT(patch_radius);
-    LUA_EXT_GET_STRING(cor_img);
+    LUA_EXT_GET_INT(off_row);
+    LUA_EXT_GET_INT(off_col);
 
     int len = lua_objlen(l, -1);
     std::vector<NymphPoint> centers(len);
@@ -243,7 +249,10 @@ LUA_EXT_FUNC(markcorpatch)
     LUA_EXT_GET_NYMPH_ID(nymph_id);
 
     NymphManager& img = NymphManager::insobj();
-    Nymph::Test::MarkCorPatch(img(nymph_id, src_img), img(nymph_id, dst_img), patch_radius, img(nymph_id, cor_img), centers);
+    NymphOffset off;
+    off.row = off_row;
+    off.col = off_col;
+    Nymph::Test::MarkCorPatch(img(nymph_id, src_img), img(nymph_id, dst_img), patch_radius, off, centers);
 
     return 0;
 }
@@ -307,6 +316,56 @@ LUA_EXT_FUNC(set_patch_energy)
 
     LUA_EXT_RETURN_START;
     LUA_EXT_RETURN_INT(result);
+    LUA_EXT_RETURN_END;
+}
+
+LUA_EXT_FUNC(show_pm_prob)
+{
+    LUA_EXT_GET_PARAM_START(4);
+    LUA_EXT_GET_STRING(dst_name);
+    LUA_EXT_GET_STRING(cor_name);
+    LUA_EXT_GET_INT(patch_radius);
+    LUA_EXT_GET_STRING(prob_name);
+    LUA_EXT_GET_PARAM_END;
+
+    LUA_EXT_GET_NYMPH_ID(nymph_id);
+    auto& img = NymphManager::insobj();
+    Nymph::Test::DrawPatchMatchCor(img(nymph_id, dst_name), img(nymph_id, cor_name), patch_radius, img(nymph_id, prob_name));
+
+    return 0;
+}
+
+LUA_EXT_FUNC(show_pm_result)
+{
+    LUA_EXT_GET_PARAM_START(4);
+    LUA_EXT_GET_STRING(dst_name);
+    LUA_EXT_GET_STRING(cor_name);
+    LUA_EXT_GET_INT(patch_radius);
+    LUA_EXT_GET_STRING(result_name);
+    LUA_EXT_GET_PARAM_END;
+
+    LUA_EXT_GET_NYMPH_ID(nymph_id);
+    auto& img = NymphManager::insobj();
+    Nymph::Test::DrawPatchMatchCorResult(img(nymph_id, dst_name), img(nymph_id, cor_name), patch_radius, img(nymph_id, result_name));
+
+    return 0;
+}
+
+LUA_EXT_FUNC(corpoint)
+{
+    LUA_EXT_GET_PARAM_START(3);
+    LUA_EXT_GET_STRING(cor_name);
+    LUA_EXT_GET_INT(row);
+    LUA_EXT_GET_INT(col);
+    LUA_EXT_GET_PARAM_END;
+
+    LUA_EXT_GET_NYMPH_ID(nymph_id);
+    auto& img = NymphManager::insobj();
+    NymphPoint npt = Nymph::nymph_corpoint(img(nymph_id, cor_name), row, col);
+
+    LUA_EXT_RETURN_START;
+    LUA_EXT_RETURN_INT(npt.row - row);
+    LUA_EXT_RETURN_INT(npt.col - col);
     LUA_EXT_RETURN_END;
 }
 

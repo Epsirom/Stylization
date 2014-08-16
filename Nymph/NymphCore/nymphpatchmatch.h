@@ -4,6 +4,7 @@
 #include "nymphalgorithm.h"
 #include <opencv2/opencv.hpp>
 
+
 namespace Nymph
 {
     namespace PatchMatch {
@@ -13,8 +14,8 @@ namespace Nymph
     }
 
     namespace Test {
-        void DrawCor(const cv::Mat& dst, const cv::Mat& cor, int patch_radius);
-        void DrawCorResult(const cv::Mat& dst, const cv::Mat& cor, int patch_radius, int offset_row = 0, int offset_col = 0);
+        void DrawCor(const cv::Mat& dst, const cv::Mat& cor, int patch_radius, cv::Mat& show);
+        void DrawCorResult(const cv::Mat& dst, const cv::Mat& cor, int patch_radius, cv::Mat& show, int offset_row = 0, int offset_col = 0);
     }
 }
 

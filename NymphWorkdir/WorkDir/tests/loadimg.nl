@@ -1,0 +1,10 @@
+loadimage("style_in", "img/si.png")
+loadimage("style_out", "img/so.png")
+loadimage("nymph_in", "img/ni.png")
+loadimage("nymph_out", "img/no.png")
+rows, cols = imgsize('nymph_in')
+cprint('rows='..rows..',cols='..cols)
+-- syncview()
+-- showresult()
+
+imshow('Style_Input', 'style_in')

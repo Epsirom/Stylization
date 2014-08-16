@@ -119,9 +119,8 @@ bool RandomSearch(NymphPatchEnergyFunc energy, const Mat &src, const Mat &dst, M
 namespace Test {
 
 
-void DrawCor(const Mat &dst, const Mat &cor, int patch_radius)
+void DrawCor(const Mat &dst, const Mat &cor, int patch_radius, Mat& show)
 {
-    Mat show;
     dst.copyTo(show);
     for (int i = patch_radius; i < cor.rows - patch_radius; ++i)
     {
@@ -134,10 +133,10 @@ void DrawCor(const Mat &dst, const Mat &cor, int patch_radius)
             show_pt[2] = 255;
         }
     }
-    imshow("Corresponding Map", show);
+    //imshow("Corresponding Map", show);
 }
 
-void DrawCorResult(const Mat &dst, const Mat &cor, int patch_radius, int offset_row, int offset_col)
+void DrawCorResult(const Mat &dst, const Mat &cor, int patch_radius, Mat& _show, int offset_row, int offset_col)
 {
     Mat show(cor.rows, cor.cols, CV_8UC3, Scalar::all(0));
     int patch_size = patch_radius * 2 + 1;
@@ -159,7 +158,8 @@ void DrawCorResult(const Mat &dst, const Mat &cor, int patch_radius, int offset_
                     copyTo(show(Rect(j - patch_radius, i - patch_radius, patch_size, patch_size)));
         }
     }
-    imshow("PatchMatch Result", show);
+    show.copyTo(_show);
+    //imshow("PatchMatch Result", show);
 }
 
 

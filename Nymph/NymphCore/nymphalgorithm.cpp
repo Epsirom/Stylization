@@ -4,7 +4,6 @@
 
 #include <cmath>
 #include <QDebug>
-
 #include <iostream>
 
 using namespace cv;
@@ -34,7 +33,16 @@ void nymph_imwrite(std::string file_name, const Mat &mat)
     imwrite(file_name, mat);
 }
 
-void PatchANN(NymphPatchEnergyFunc energy, const Mat &src, const Mat &dst, int patch_radius, Mat &cor)
+NymphPoint nymph_corpoint(const Mat &cor, int row, int col)
+{
+    auto& pt = cor.at<Vec2i>(row, col);
+    NymphPoint npt;
+    npt.row = pt[0];
+    npt.col = pt[1];
+    return npt;
+}
+
+void PatchANN(NymphPatchEnergyFunc energy, const Mat &src, const Mat &dst, int patch_radius, Mat &cor, int iterations)
 {
     // Here implement an Approximate Nearest Neighbor algorithm of PatchMatch
     qDebug() << "PatchANN Start...";
@@ -47,7 +55,7 @@ void PatchANN(NymphPatchEnergyFunc energy, const Mat &src, const Mat &dst, int p
 
     //imshow("Source", src);
 
-    for (int it = 0; it < 5; ++it)
+    for (int it = 0; it < iterations; ++it)
     {
         // An iteration of PatchMatch ANN.
         qDebug() << "Iteration" << it;
@@ -86,6 +94,11 @@ double EnergyWrapper(NymphEnergyFunc func, const Mat &src, const Mat &dst, int p
     offset.col = corpt[1] - pt.col;
     //qDebug() << "Offset {" << offset.row << "," << offset.col << "}";
     return func(src, dst, patch_radius, offset, centers);
+}
+
+double EnergyWrapper(NymphEnergyFunc func, const Mat &src, const Mat &dst, int patch_radius, NymphOffset off, std::vector<NymphPoint> &centers)
+{
+    return func(src, dst, patch_radius, off, centers);
 }
 
 /*
@@ -154,6 +167,17 @@ double Energy(const Mat &src, const Mat &dst, int patch_radius, int center_src_r
 namespace Test {
 
 
+
+void DrawPatchMatchCor(const Mat &dst, const Mat &cor, int patch_radius, Mat& show)
+{
+    DrawCor(dst, cor, patch_radius, show);
+}
+
+void DrawPatchMatchCorResult(const Mat &dst, const Mat &cor, int patch_radius, Mat& show, int offset_row, int offset_col)
+{
+    DrawCorResult(dst, cor, patch_radius, show, offset_row, offset_col);
+}
+
 void MarkPatch(const Mat &src, Mat &dst, int patch_radius, std::vector<NymphPoint> &centers)
 {
     src.copyTo(dst);
@@ -173,7 +197,10 @@ void MarkPatch(const Mat &src, Mat &dst, int patch_radius, std::vector<NymphPoin
     {
         for (int i = 0; i < 4; ++i)
         {
-            if (flags.at<uchar>(pt.row + dirmap[i][0] * patch_size, pt.col + dirmap[i][1] * patch_size) == 0)
+            int tmp_row = pt.row + dirmap[i][0] * patch_size, tmp_col = pt.col + dirmap[i][1] * patch_size;
+            if (tmp_row < 0 || tmp_row >= flags.rows
+                    || tmp_col < 0 || tmp_col >= flags.cols
+                    || flags.at<uchar>(tmp_row, tmp_col) == 0)
             {
                 Point fromPoint(
                             pt.col + linemap[dirmap[i][1] + 1][0] * patch_radius,
@@ -221,7 +248,10 @@ void MarkCorPatch(const Mat &src, Mat &dst, int patch_radius, NymphOffset off, s
     {
         for (int i = 0; i < 4; ++i)
         {
-            if (flags.at<uchar>(pt.row + dirmap[i][0] * patch_size, pt.col + dirmap[i][1] * patch_size) == 0)
+            int tmp_row = pt.row + dirmap[i][0] * patch_size, tmp_col = pt.col + dirmap[i][1] * patch_size;
+            if (tmp_row < 0 || tmp_row >= flags.rows
+                    || tmp_col < 0 || tmp_col >= flags.cols
+                    || flags.at<uchar>(tmp_row, tmp_col) == 0)
             {
                 Point fromPoint(
                             pt.col + linemap[dirmap[i][1] + 1][0] * patch_radius,

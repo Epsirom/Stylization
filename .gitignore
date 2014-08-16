@@ -32,7 +32,11 @@ Makefile*
 */lib/*
 
 build-Nymph-*
-NymphWorkDir
+NymphWorkDir/*
+!NymphWorkDir/WorkDir
+NymphWorkDir/WorkDir/img/*
+NymphWorkDir/WorkDir/result
+!NymphWorkDir/WorkDir/img/*_ld
 
 # Intermediate files of compiler
 *.i

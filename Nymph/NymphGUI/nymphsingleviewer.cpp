@@ -21,6 +21,7 @@ void NymphSingleViewer::setImage(QPixmap &img)
 {
     scene()->clear();
     scene()->addPixmap(img);
+    scene()->setSceneRect(img.rect());
 }
 
 void NymphSingleViewer::scrollContentsBy(int dx, int dy)

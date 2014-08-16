@@ -64,6 +64,10 @@ LUA_EXT_FUNC(imshow);
 LUA_EXT_FUNC(saveimage);
 LUA_EXT_FUNC(set_energy);
 LUA_EXT_FUNC(set_patch_energy);
+LUA_EXT_FUNC(show_pm_prob);     // show patch match probablity map
+LUA_EXT_FUNC(show_pm_result);   // show patch match result
+LUA_EXT_FUNC(corpoint);
+
 void imhide(std::string window_name = std::string());
 
 #define LUA_EXT_DECLARE_FUNCTIONS \
@@ -83,6 +87,10 @@ void imhide(std::string window_name = std::string());
     LUA_EXT_PUSH_FUNC(saveimage); \
     LUA_EXT_PUSH_FUNC(set_energy); \
     LUA_EXT_PUSH_FUNC(set_patch_energy); \
+    LUA_EXT_PUSH_FUNC(show_pm_prob); \
+    LUA_EXT_PUSH_FUNC(show_pm_result); \
+    LUA_EXT_PUSH_FUNC(corpoint); \
+
 
 
 #endif // NYMPHLUA_EXT_H

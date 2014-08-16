@@ -15,6 +15,12 @@ namespace Nymph
 
         NYMPH_ENERGY_FUNC_TPL(rgb_naive);
         NYMPH_PATCH_ENERGY_FUNC_TPL(rgb_naive_patch);
+
+        NYMPH_ENERGY_FUNC_TPL(rgb_factor);
+        NYMPH_PATCH_ENERGY_FUNC_TPL(rgb_factor_patch);
+
+        NYMPH_ENERGY_FUNC_TPL(luminance_naive);
+        NYMPH_PATCH_ENERGY_FUNC_TPL(luminance_naive_patch);
     }
 }
 
@@ -23,10 +29,15 @@ namespace Nymph
 
 #define NYMPH_ENERGY_FUNC_REGISTER \
     NYMPH_ENERGY_FUNC_REG_TPL(rgb_naive); \
+    NYMPH_ENERGY_FUNC_REG_TPL(rgb_factor); \
+    NYMPH_ENERGY_FUNC_REG_TPL(luminance_naive); \
+
 
 
 #define NYMPH_PATCH_ENERGY_FUNC_REGISTER \
     NYMPH_PATCH_ENERGY_FUNC_REG_TPL(rgb_naive); \
+    NYMPH_PATCH_ENERGY_FUNC_REG_TPL(rgb_factor); \
+    NYMPH_PATCH_ENERGY_FUNC_REG_TPL(luminance_naive); \
 
 
 #endif // NYMPHENERGY_H

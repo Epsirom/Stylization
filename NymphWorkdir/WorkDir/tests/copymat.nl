@@ -1,0 +1,7 @@
+loadimage("test", "cnm.jpg")
+assignmat("style_in", "test")
+copymat("style_out", "test")
+loadimage("test", "swift.jpg")
+assignmat("nymph_in", "test")
+syncview()
+showresult()
