@@ -36,6 +36,7 @@ NymphWorkDir/*
 !NymphWorkDir/WorkDir
 NymphWorkDir/WorkDir/img/*
 NymphWorkDir/WorkDir/result
+NymphWorkDir/WorkDir/ir
 !NymphWorkDir/WorkDir/img/*_ld
 
 # Intermediate files of compiler

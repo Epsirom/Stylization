@@ -1,48 +1,20 @@
+require('algorithm.ploader')
+
 candidate_image_packages = {
 	'farm', 'flower', 'fruit', 'hand', 'sea'
 }
-using_ld_image = true
-using_image_id = 5
 
-NYMPH_INPUT_PACKAGE = candidate_image_packages[using_image_id]
-if using_ld_image then
-	NYMPH_INPUT_PACKAGE = NYMPH_INPUT_PACKAGE..'_ld'
-end
+nymph_loader({
+	package = candidate_image_packages[5],
+	ld = true,
+	seeds = 1024,
+	patch_radius = 2,
+	patch_match_iterations = 3,
+	debug = true,
+	energy = 'rgb',
+	rgb_params = {50, 1, 1, 1}
+});
 
-NYMPH_PATCH_ANN_ITERATIONS = 5
-require('algorithm.config')
-require('algorithm.utils')
-
-debug('Package: '..NYMPH_INPUT_PACKAGE)
-
-set_rgb({100, 1, 1, 1})
-debug('Energy: rgb_naive')
-
-function calc_size(obj)
-	obj.rows, obj.cols = imgsize(obj.img)
-end
-
--- Load images and prepare nymph_out
-debug('Loading images...')
-
-loadimage('style_in', style.input)
-loadimage('style_out', style.output)
-loadimage('nymph_in', nymph.input)
-copymat('nymph_out', 'nymph_in')
-
-style.input = {img = 'style_in', rows = 0, cols = 0}
-calc_size(style.input)
-style.output = {img = 'style_out', rows = 0, cols = 0}
-calc_size(style.output)
-nymph.input = {img = 'nymph_in', rows = 0, cols = 0}
-calc_size(nymph.input)
-nymph.output = {
-	img = 'nymph_out', 
-	rows = nymph.input.rows, 
-	cols = nymph.input.cols
-}
-
-debug('Load images done.')
 
 patch_radius = math.floor(math.sqrt(style.input.rows * style.input.cols / 10000) / 2)
 patch_size = patch_radius * 2 + 1
@@ -162,10 +134,10 @@ end
 
 
 -- PatchANN
-debug('Start PatchANN...')
-patchANN('nymph_in', 'style_in', patch_radius, 'cor')
-cor = 'cor'
-debug('PatchANN done.')
+--debug('Start PatchANN...')
+--patchANN('nymph_in', 'style_in', patch_radius, 'cor')
+--cor = 'cor'
+--debug('PatchANN done.')
 
 -- Select seeds
 --debug('Selecting seeds...')
@@ -242,15 +214,25 @@ function NymphIteration()
 	--syncview()
 end
 
-min_mt_remain = patch_size * patch_size * 1000
+min_mt_remain = style.input.cols * style.input.rows / 10
 debug('Start segmentation')
+max_mt_remain = mt_remain
+total_mt_remain = max_mt_remain - min_mt_remain
+percentage_step = 1
+debug('0%')
+percentage = 0
 while mt_remain > min_mt_remain do
 	NymphIteration()
+	current_percentage = (max_mt_remain - mt_remain) / total_mt_remain * 100
+	while current_percentage > percentage + percentage_step do
+		percentage = percentage + percentage_step
+		debug(percentage..'%')
+	end
 end
 debug('Segmentation done')
 
-saveimage('result/segmentation_src_'..NYMPH_INPUT_PACKAGE..'.jpg', nymph.output.img)
-saveimage('result/segmentation_cor_'..NYMPH_INPUT_PACKAGE..'.jpg', style.output.img)
+--saveimage('result/segmentation_src_'..NYMPH_INPUT_PACKAGE..'.jpg', nymph.output.img)
+--saveimage('result/segmentation_cor_'..NYMPH_INPUT_PACKAGE..'.jpg', style.output.img)
 
 syncview()
 showresult()

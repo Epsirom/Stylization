@@ -56,10 +56,9 @@ NYMPH_ENERGY_FUNC_TPL(rgb)
 {
     double result = 0;
     int patch_size = patch_radius * 2 + 1;
-    NymphEnergyParam patch_param(&param[1], &param[4]);
     for (auto& pt : centers)
     {
-        result += rgb_patch(patch_param, src, dst, patch_radius, pt.row, pt.col, pt.row + off.row, pt.col + off.col);
+        result += rgb_patch(param, src, dst, patch_radius, pt.row, pt.col, pt.row + off.row, pt.col + off.col);
     }
     return result - centers.size() * param[0] * patch_size * patch_size;
 }
@@ -86,7 +85,7 @@ NYMPH_PATCH_ENERGY_FUNC_TPL(rgb_patch)
             auto& dst_pt = dst.at<Vec3b>(center_dst_row + i, center_dst_col + j);
             for (int k = 0; k < 3; ++k)
             {
-                result += fabs(src_pt[k] - dst_pt[k]) * param[k];
+                result += fabs(src_pt[k] - dst_pt[k]) * param[k + 1];
             }
         }
     }

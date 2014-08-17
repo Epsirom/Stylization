@@ -56,7 +56,7 @@ void PatchANN(NymphPatchEnergyPack& energy, const Mat &src, const Mat &dst, int 
 {
     // Here implement an Approximate Nearest Neighbor algorithm of PatchMatch
     qDebug() << "PatchANN Start...";
-    cor.create(src.rows, src.cols, CV_32SC2);
+    cor = Mat::zeros(src.rows, src.cols, CV_32SC2);
     PatchMatch::InitCor(cor, dst.size(), patch_radius);
     //Test::DrawCor(dst, cor, patch_radius); return;
 

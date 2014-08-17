@@ -46,10 +46,22 @@ void NymphManager::store(Mat& m, int id, const string image_name)
     _storage[id].mat[image_name] = m;
 }
 
-void NymphManager::loadFile(const string filename, int id, const string image_name)
+void NymphManager::loadImage(const string filename, int id, const string image_name)
 {
     Mat tmp = imread(filename);
     _storage[id].mat[image_name] = tmp;
+}
+
+void NymphManager::loadMat(const string filename, int id, const string image_name)
+{
+    FileStorage fs(filename, FileStorage::READ);
+    fs["nymph"] >> _storage[id].mat[image_name];
+}
+
+void NymphManager::saveMat(const string filename, int id, const string image_name)
+{
+    FileStorage fs(filename, FileStorage::WRITE);
+    fs << "nymph" << _storage[id].mat[image_name];
 }
 
 Mat& NymphManager::getMat(int id, const string image_name)

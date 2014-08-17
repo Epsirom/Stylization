@@ -11,7 +11,9 @@ end
 if not NYMPH_PATCH_RADIUS then 
 	NYMPH_PATCH_RADIUS = 2 
 end
-NYMPH_DEBUG = true
+if not NYMPH_DEBUG then
+	NYMPH_DEBUG = true
+end
 
 if not NYMPH_PATCH_ANN_ITERATIONS then 
 	NYMPH_PATCH_ANN_ITERATIONS = 5 

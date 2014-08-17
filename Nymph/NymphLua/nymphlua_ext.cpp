@@ -53,7 +53,7 @@ LUA_EXT_FUNC(loadimage)
     LUA_EXT_GET_PARAM_END;
 
     LUA_EXT_GET_NYMPH_ID(nymph_id);
-    NymphManager::instance()->loadFile(filename, nymph_id, target);
+    NymphManager::instance()->loadImage(filename, nymph_id, target);
     return 0;
 }
 
@@ -426,6 +426,34 @@ LUA_EXT_FUNC(mat_3b)
     LUA_EXT_RETURN_INT(npt.c2);
     LUA_EXT_RETURN_INT(npt.c3);
     LUA_EXT_RETURN_END;
+}
+
+LUA_EXT_FUNC(loadmat)
+{
+    LUA_EXT_GET_PARAM_START(2);
+    LUA_EXT_GET_STRING(file_name);
+    LUA_EXT_GET_STRING(mat_name);
+    LUA_EXT_GET_PARAM_END;
+
+    LUA_EXT_GET_NYMPH_ID(nymph_id);
+
+    NymphManager::instance()->loadMat(file_name, nymph_id, mat_name);
+
+    return 0;
+}
+
+LUA_EXT_FUNC(savemat)
+{
+    LUA_EXT_GET_PARAM_START(2);
+    LUA_EXT_GET_STRING(file_name);
+    LUA_EXT_GET_STRING(mat_name);
+    LUA_EXT_GET_PARAM_END;
+
+    LUA_EXT_GET_NYMPH_ID(nymph_id);
+
+    NymphManager::instance()->saveMat(file_name, nymph_id, mat_name);
+
+    return 0;
 }
 
 

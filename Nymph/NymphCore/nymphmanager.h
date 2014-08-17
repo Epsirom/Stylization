@@ -33,7 +33,11 @@ public:
     void releaseNymph(int id);
     void resetNymph(int id);
     void store(cv::Mat& m, int id, const std::string image_name);
-    void loadFile(const std::string filename, int id, const std::string image_name);
+    void loadImage(const std::string filename, int id, const std::string image_name);
+
+    void loadMat(const std::string filename, int id, const std::string image_name);
+    void saveMat(const std::string filename, int id, const std::string image_name);
+
     cv::Mat& getMat(int id, const std::string image_name);
     QPixmap getPixmap(int id, const std::string image_name);
     void aliasMat(int id, const std::string new_name, const std::string old_name);
