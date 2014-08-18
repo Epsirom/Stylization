@@ -428,6 +428,73 @@ LUA_EXT_FUNC(mat_3b)
     LUA_EXT_RETURN_END;
 }
 
+LUA_EXT_FUNC(set_mat_3b)
+{
+    LUA_EXT_GET_PARAM_START(6);
+    LUA_EXT_GET_STRING(mat_name);
+    LUA_EXT_GET_INT(row);
+    LUA_EXT_GET_INT(col);
+    LUA_EXT_GET_INT(c1);
+    LUA_EXT_GET_INT(c2);
+    LUA_EXT_GET_INT(c3);
+    LUA_EXT_GET_PARAM_END;
+
+    LUA_EXT_GET_NYMPH_ID(nymph_id);
+    auto& img = NymphManager::insobj();
+    Nymph::nymph_set_mat_3b(img(nymph_id, mat_name), row, col, c1, c2, c3);
+
+    return 0;
+}
+
+LUA_EXT_FUNC(set_mat_2i)
+{
+    LUA_EXT_GET_PARAM_START(5);
+    LUA_EXT_GET_STRING(mat_name);
+    LUA_EXT_GET_INT(row);
+    LUA_EXT_GET_INT(col);
+    LUA_EXT_GET_INT(c1);
+    LUA_EXT_GET_INT(c2);
+    LUA_EXT_GET_PARAM_END;
+
+    LUA_EXT_GET_NYMPH_ID(nymph_id);
+    auto& img = NymphManager::insobj();
+    Nymph::nymph_set_mat_2i(img(nymph_id, mat_name), row, col, c1, c2);
+
+    return 0;
+}
+
+LUA_EXT_FUNC(init_mat_2i)
+{
+    LUA_EXT_GET_PARAM_START(4);
+    LUA_EXT_GET_STRING(mat_name);
+    LUA_EXT_GET_INT(rows);
+    LUA_EXT_GET_INT(cols);
+    LUA_EXT_GET_INT(scalar);
+    LUA_EXT_GET_PARAM_END;
+
+    LUA_EXT_GET_NYMPH_ID(nymph_id);
+    auto& img = NymphManager::insobj();
+    Nymph::nymph_mat_init(img(nymph_id, mat_name), rows, cols, _2I, scalar);
+
+    return 0;
+}
+
+LUA_EXT_FUNC(init_mat_3b)
+{
+    LUA_EXT_GET_PARAM_START(4);
+    LUA_EXT_GET_STRING(mat_name);
+    LUA_EXT_GET_INT(rows);
+    LUA_EXT_GET_INT(cols);
+    LUA_EXT_GET_INT(scalar);
+    LUA_EXT_GET_PARAM_END;
+
+    LUA_EXT_GET_NYMPH_ID(nymph_id);
+    auto& img = NymphManager::insobj();
+    Nymph::nymph_mat_init(img(nymph_id, mat_name), rows, cols, _3B, scalar);
+
+    return 0;
+}
+
 LUA_EXT_FUNC(loadmat)
 {
     LUA_EXT_GET_PARAM_START(2);

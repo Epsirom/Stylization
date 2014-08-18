@@ -69,8 +69,12 @@ LUA_EXT_FUNC(draw_pm_result);   // draw patch match result
 LUA_EXT_FUNC(get_offset);
 LUA_EXT_FUNC(mat_2i);
 LUA_EXT_FUNC(mat_3b);
+LUA_EXT_FUNC(set_mat_3b);
+LUA_EXT_FUNC(set_mat_2i);
 LUA_EXT_FUNC(loadmat);
 LUA_EXT_FUNC(savemat);
+LUA_EXT_FUNC(init_mat_2i);
+LUA_EXT_FUNC(init_mat_3b);
 
 void imhide(std::string window_name = std::string());
 
@@ -96,8 +100,12 @@ void imhide(std::string window_name = std::string());
     LUA_EXT_PUSH_FUNC(get_offset); \
     LUA_EXT_PUSH_FUNC(mat_2i); \
     LUA_EXT_PUSH_FUNC(mat_3b); \
+    LUA_EXT_PUSH_FUNC(set_mat_3b); \
+    LUA_EXT_PUSH_FUNC(set_mat_2i); \
     LUA_EXT_PUSH_FUNC(loadmat); \
     LUA_EXT_PUSH_FUNC(savemat); \
+    LUA_EXT_PUSH_FUNC(init_mat_2i); \
+    LUA_EXT_PUSH_FUNC(init_mat_3b); \
 
 
 

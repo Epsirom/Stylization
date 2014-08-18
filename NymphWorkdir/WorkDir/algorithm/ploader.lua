@@ -1,15 +1,16 @@
 -- Nymph Package Loader
 
+candidate_image_packages = {
+	'farm', 'flower', 'fruit', 'hand', 'sea', 'anime', 'head'
+}
+
 --[[ Use this code fraction to setup loader.
 
 require('algorithm.ploader')
 
-candidate_image_packages = {
-	'farm', 'flower', 'fruit', 'hand', 'sea'
-}
-
 nymph_loader({
-	package = candidate_image_packages[1],
+	-- farm=1, flower=2, fruit=3, hand=4, sea=5, anime=6, head=7
+	package = 1,
 	ld = true,
 	seeds = 1024,
 	patch_radius = 2,
@@ -28,7 +29,7 @@ function calc_size(obj)
 end
 
 function nymph_loader(terms)
-	NYMPH_INPUT_PACKAGE = terms['package']
+	NYMPH_INPUT_PACKAGE = candidate_image_packages[terms['package']]
 	if terms['ld'] then
 		NYMPH_INPUT_PACKAGE = NYMPH_INPUT_PACKAGE..'_ld'
 	end
@@ -62,6 +63,7 @@ function nymph_loader(terms)
 		rows = nymph.input.rows, 
 		cols = nymph.input.cols
 	}
+	init_mat_3b(nymph.output.img, nymph.output.rows, nymph.output.cols, 0)
 
 	cor = 'cor'
 	load_cor(NYMPH_INPUT_PACKAGE, cor)

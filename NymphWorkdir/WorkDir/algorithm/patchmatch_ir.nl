@@ -3,7 +3,7 @@ require('algorithm.energy')
 set_rgb({100, 1, 1, 1})
 
 pkgs = {
-	'farm', 'flower', 'fruit', 'hand', 'sea'
+	'farm', 'flower', 'fruit', 'hand', 'sea', 'anime', 'head'
 }
 
 iterations = 5

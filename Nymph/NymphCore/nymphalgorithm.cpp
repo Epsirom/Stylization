@@ -52,6 +52,27 @@ Nymph3B nymph_mat_at_3b(const Mat &m, int row, int col)
     return npt;
 }
 
+void nymph_set_mat_2i(Mat &m, int row, int col, int vc1, int vc2)
+{
+    auto& pt = m.at<Vec2i>(row, col);
+    pt[0] = vc1;
+    pt[1] = vc2;
+}
+
+void nymph_set_mat_3b(Mat &m, int row, int col, unsigned char vc1, unsigned char vc2, unsigned char vc3)
+{
+    auto& pt = m.at<Vec3b>(row, col);
+    pt[0] = vc1;
+    pt[1] = vc2;
+    pt[2] = vc3;
+}
+
+void nymph_mat_init(Mat &m, int rows, int cols, NymphMatType type, int scalar)
+{
+    int typemap[2] = {CV_8UC3, CV_32SC2};
+    m = Mat(rows, cols, typemap[type], Scalar(scalar));
+}
+
 void PatchANN(NymphPatchEnergyPack& energy, const Mat &src, const Mat &dst, int patch_radius, Mat &cor, int iterations)
 {
     // Here implement an Approximate Nearest Neighbor algorithm of PatchMatch

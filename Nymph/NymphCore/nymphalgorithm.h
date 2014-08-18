@@ -46,12 +46,19 @@ typedef struct NymphPatchEnergyPack {
     NymphEnergyParam param;
 } NymphPatchEnergyPack;
 
+typedef enum NymphMatType {
+    _3B = 0, _2I
+} NymphMatType;
+
 namespace Nymph {
     void nymph_imshow(std::string window_name, const cv::Mat& mat);
     void nymph_imhide(std::string window_name = std::string());
     void nymph_imwrite(std::string file_name, const cv::Mat& mat);
     Nymph2I nymph_mat_at_2i(const cv::Mat& m, int row, int col);
     Nymph3B nymph_mat_at_3b(const cv::Mat& m, int row, int col);
+    void nymph_set_mat_2i(cv::Mat& m, int row, int col, int vc1, int vc2);
+    void nymph_set_mat_3b(cv::Mat& m, int row, int col, unsigned char vc1, unsigned char vc2, unsigned char vc3);
+    void nymph_mat_init(cv::Mat& m, int rows, int cols, NymphMatType type, int scalar);
 
     void PatchANN(NymphPatchEnergyPack& energy, const cv::Mat& src, const cv::Mat& dst, int patch_radius, cv::Mat& cor, int iterations = 5);
     double EnergyWrapper(NymphEnergyPack& energy, const cv::Mat& src, const cv::Mat& dst, int patch_radius, cv::Mat& cor, std::vector<NymphPoint>& centers);
