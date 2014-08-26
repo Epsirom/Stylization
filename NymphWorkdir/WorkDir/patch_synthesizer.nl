@@ -7,7 +7,7 @@ candidate_image_packages = {
 }
 
 nymph_loader({
-	package = candidate_image_packages[6],
+	package = 6,
 	ld = true,
 	seeds = 1024,
 	patch_radius = 2,

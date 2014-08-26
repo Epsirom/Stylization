@@ -34,18 +34,24 @@ end
 
 progress.add = function(p, v, printfunc)
 	p.current_value = p.current_value + v
+	local flag = false
 	local tmp = (p.current_value - p.min_value) / p.total_value * 100
 	while tmp > p.percentage + p.step do
+		flag = true
 		p.percentage = p.percentage + p.step
 		progress.display(p, printfunc)
 	end
+	return flag
 end
 
 progress.set_value = function(p, v, printfunc)
 	p.current_value = v
+	local flag = false
 	local tmp = (p.current_value - p.min_value) / p.total_value * 100
 	while tmp > p.percentage + p.step do
+		flag = true
 		p.percentage = p.percentage + p.step
 		progress.display(p, printfunc)
 	end
+	return flag
 end

@@ -1,7 +1,8 @@
 -- Nymph Package Loader
 
 candidate_image_packages = {
-	'farm', 'flower', 'fruit', 'hand', 'sea', 'anime', 'head'
+	'farm', 'flower', 'fruit', 'hand', 'sea', 
+	'anime', 'head', 'ship', 'fat', 'cube'
 }
 
 --[[ Use this code fraction to setup loader.
@@ -9,7 +10,8 @@ candidate_image_packages = {
 require('algorithm.ploader')
 
 nymph_loader({
-	-- farm=1, flower=2, fruit=3, hand=4, sea=5, anime=6, head=7
+	-- farm=1, flower=2, fruit=3, hand=4, sea=5, 
+	-- anime=6, head=7, ship=8, fat=9, cube=10
 	package = 1,
 	ld = true,
 	seeds = 1024,

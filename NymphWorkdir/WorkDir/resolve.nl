@@ -1,18 +1,14 @@
 require('algorithm.ploader')
 
-candidate_image_packages = {
-	'farm', 'flower', 'fruit', 'hand', 'sea'
-}
-
 nymph_loader({
-	package = candidate_image_packages[5],
+	package = 5,
 	ld = true,
-	seeds = 1024,
+	seeds = 256,
 	patch_radius = 2,
 	patch_match_iterations = 3,
 	debug = true,
 	energy = 'rgb',
-	rgb_params = {50, 1, 1, 1}
+	rgb_params = {90, 1, 1, 1}
 });
 
 
@@ -147,6 +143,13 @@ math.randomseed(os.time())
 copymat(style.output.img, style.input.img)
 copymat(nymph.output.img, nymph.input.img)
 
+require('mod.recorder')
+rc_nymph = recorder.create({
+	directory = 'segment/nymph_in'
+})
+rc_style = recorder.create({
+	directory = 'segment/style_in'
+})
 
 function NymphIteration()
 
@@ -210,6 +213,9 @@ function NymphIteration()
 
 	markpatch(nymph.output.img, nymph.output.img, patch_radius, nymph.seeds[1].centers)
 	markcorpatch(style.output.img, style.output.img, patch_radius, nymph.seeds[1].offset[1], nymph.seeds[1].offset[2], nymph.seeds[1].centers)
+	
+	recorder.record(rc_nymph, nymph.output.img)
+	recorder.record(rc_style, style.output.img)
 
 	--syncview()
 end

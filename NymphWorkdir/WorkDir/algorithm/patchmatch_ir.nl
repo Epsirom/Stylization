@@ -3,12 +3,13 @@ require('algorithm.energy')
 set_rgb({100, 1, 1, 1})
 
 pkgs = {
-	'farm', 'flower', 'fruit', 'hand', 'sea', 'anime', 'head'
+	'farm', 'flower', 'fruit', 'hand', 'sea', 
+	'anime', 'head', 'ship', 'fat', 'cube'
 }
 
 iterations = 5
 
-for i = 1, #(pkgs) do
+for i = 10,10 do --1, #(pkgs) do
 	local pkg = pkgs[i]..'_ld'
 	loadimage('style_in', 'img/'..pkg..'/style_in.jpg')
 	loadimage('nymph_in', 'img/'..pkg..'/nymph_in.jpg')
@@ -16,7 +17,7 @@ for i = 1, #(pkgs) do
 
 	patch_radius = math.floor(math.sqrt(rows * cols / 10000) / 2)
 
-	cprint('PatchANN '..pkg)
+	cprint('PatchANN '..pkg..' '..patch_radius)
 	cor = 'cor_'..pkg
 	patchANN('nymph_in', 'style_in', patch_radius, cor, iterations)
 	cprint('PatchANN done')

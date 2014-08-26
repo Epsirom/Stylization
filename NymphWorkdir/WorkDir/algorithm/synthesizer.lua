@@ -1,6 +1,7 @@
 syn_counter = {}
 
 require('mod.color')
+require('algorithm.gaussian')
 
 function get_rgbhsl(img_name, row, col)
 	local b, g, r, h, s, l
@@ -28,7 +29,7 @@ function synthesize_point(pt)
 	cor_row = cor_row - pt[1] + oldpt[1]
 	cor_col = cor_col - pt[2] + oldpt[2]
 	local r, g, b, h, s, l = get_rgbhsl(style.output.img, cor_row, cor_col)
-	r, g, b = hslToRgb(h * 0.6 + srch * 0.4, s * 0.2 + srcs * 0.8, l * 0.6 + srcl * 0.4)
+	r, g, b = hslToRgb(h * 0.5 + srch * 0.5, s * 0.2 + srcs * 0.8, l * 0.6 + srcl * 0.4)
 	set_mat_3b(nymph.output.img, oldpt[1], oldpt[2], b, g, r)
 end
 
@@ -49,9 +50,9 @@ function synthesize_patch_by_luminance(center, offset)
 			oldl = (oldl * counter + l) / (counter + 1)
 			syn_counter[row + 1][col + 1] = counter + 1
 			r, g, b = hslToRgb(
-							oldh * 0.6 + srch * 0.4, 
+							oldh * 0.1 + srch * 0.9, 
 							olds * 0.2 + srcs * 0.8, 
-							oldl * 0.6 + srcl * 0.4)
+							oldl * 0.7 + srcl * 0.3)
 			set_mat_3b(nymph.output.img, row, col, b, g, r)
 		end
 	end
@@ -93,6 +94,63 @@ function synthesize()
 	local centers = nymph.seeds[1].centers
 	local offset = nymph.seeds[1].offset
 	for i, center in ipairs(centers) do
-		synthesize_patch(center, offset)
+		synthesize_patch(center, offset) --_by_luminance
+	end
+end
+
+function init_dipping(sz, s)
+	dipping_size = sz
+	init_gaussian(sz, s)
+	nymph.dip = {img = {}, prob = {}}
+	for i = 1, nymph.input.rows do
+		local tmp = {}
+		local tmp2 = {}
+		for j = 1, nymph.input.cols do
+			tmp[j] = {0, 0, 0}
+			tmp2[j] = 0
+		end
+		nymph.dip.img[i] = tmp
+		nymph.dip.prob[i] = tmp2
+	end
+end
+
+function fuse_dipping(pix1, p1, pix2, p2)
+	local pixx = {0, 0, 0}
+	local pp = p1 + p2
+	for i = 1, 3 do
+		pixx[i] = (pix1[i] * p1 + pix2[i] * p2) / pp
+	end
+	return pixx, pp
+end
+
+function dip_point(prow, pcol)
+	local r = getMT(prow, pcol)
+	local p = 0
+	local pix = {0, 0, 0}
+	local trow, tcol
+	pix[1], pix[2], pix[3] = mat_3b(nymph.output.img, prow, pcol)
+	for row = math.max(0, prow - dipping_size), math.min(nymph.input.rows - 1, prow + dipping_size) do
+		trow = row + 1
+		for col = math.max(0, pcol - dipping_size), math.min(nymph.input.cols - 1, pcol + dipping_size) do
+			if getMT(row, col) ~= r then
+				p = gaussian(row - prow, col - pcol)
+				tcol = col + 1
+				nymph.dip.img[trow][tcol], nymph.dip.prob[trow][tcol] = fuse_dipping(pix, p, nymph.dip.img[trow][tcol], nymph.dip.prob[trow][tcol])
+			end
+		end
+	end
+end
+
+function combine_dipping()
+	local pix = {0, 0, 0}
+	local p, tpix, tp
+	for row = 0, nymph.output.rows - 1 do
+		for col = 0, nymph.output.cols - 1 do
+			pix[1], pix[2], pix[3] = mat_3b(nymph.output.img, row, col)
+			tpix = nymph.dip.img[row + 1][col + 1]
+			tp = nymph.dip.prob[row + 1][col + 1]
+			pix, p = fuse_dipping(tpix, tp, pix, 1 - tp)
+			set_mat_3b(nymph.output.img, row, col, pix[1], pix[2], pix[3])
+		end
 	end
 end

@@ -10,18 +10,30 @@ end
 
 -- Matrix
 
+MT_MAGIC = 2147483647
+
 function inMT(row, col)
-	return mt[row * nymph.input.cols + col + 1]
+	return (mt[row * nymph.input.cols + col + 1] > 0)
 	--return mt[(row - 1) * nymph.input.cols + col]
+end
+
+function getMT(row, col)
+	return mt[row * nymph.input.cols + col + 1]
 end
 
 function markMT(row, col)
 	local i = row * nymph.input.cols + col + 1
 	--local i = (row - 1) * nymph.input.cols + col
-	if ValidateCenterInNymph({row, col}) and not mt[i] then
-		mt_remain = mt_remain - 1
+	if ValidateCenterInNymph({row, col}) then
+		if mt[i] == 0 then
+			mt_remain = mt_remain - 1
+			mt[i] = most_match_round
+		else
+			mt[i] = MT_MAGIC
+		end
+	else
+		mt[i] = most_match_round
 	end
-	mt[i] = true
 end
 
 function applyCenter(center)
@@ -35,7 +47,7 @@ end
 function getPointNotInMT()
 	local row = math.random(patch_radius, row_max)
 	local col = math.random(patch_radius, col_max)
-	while mt[row * nymph.input.cols + col + 1] do
+	while (mt[row * nymph.input.cols + col + 1] > 0) do
 	--while mt[(row - 1) * nymph.input.cols + col] do
 		col = col + 1
 		if col > col_max then
@@ -91,11 +103,12 @@ end
 
 function initMT()
 	mt = {}
+	most_match_round = 0
 	mt_remain = 0
 	for i = 0, nymph.input.rows - 1 do
 		for j = 0, nymph.input.cols - 1 do
 			local tmp = i * nymph.input.cols + j + 1
-			mt[tmp] = false
+			mt[tmp] = 0
 			if ValidateCenterInNymph({i, j}) then
 				mt_remain = mt_remain + 1
 			end
@@ -164,6 +177,7 @@ function grow_single_seed()
 end
 
 function mostmatch(patch_mark, corpatch_mark)
+	most_match_round = most_match_round + 1
 	generate_seeds()
 	filter_seeds()
 	grow_single_seed()
